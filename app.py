@@ -102,7 +102,7 @@ def all_chores():
 
     # Custom sort key for status
     status_map = {"Overdue": 1, "Due Soon": 2, "Completed Recently": 3}
-    chores.sort(key=lambda c: (status_map.get(c.status, 4), not c.is_priority, c.next_due, -c.frequency))
+    chores.sort(key=lambda c: (status_map.get(c.status, 4), not c.is_priority, c.next_due or date.max, -c.frequency))
 
     return render_template('index.html', chores=chores, title="All Chores")
 
@@ -120,7 +120,7 @@ def search():
         chores = query.all()
         # Sort results just like in all_chores
         status_map = {"Overdue": 1, "Due Soon": 2, "Completed Recently": 3}
-        chores.sort(key=lambda c: (status_map.get(c.status, 4), not c.is_priority, c.next_due, -c.frequency))
+        chores.sort(key=lambda c: (status_map.get(c.status, 4), not c.is_priority, c.next_due or date.max, -c.frequency))
 
     return render_template('search.html', chores=chores, title="Search Chores")
 
@@ -164,7 +164,7 @@ def get_chore(chore_id):
         'assignee': chore.assignee.name,
         'category': chore.category,
         'frequency': chore.frequency,
-        'last_completed': chore.last_completed.isoformat(),
+        'last_completed': chore.last_completed.isoformat() if chore.last_completed else None,
         'is_priority': chore.is_priority,
         'notes': chore.notes,
         'next_due': chore.next_due.isoformat() if chore.next_due else None,
