@@ -27,3 +27,34 @@ article h3 span[title="High Priority"] {
     margin-right: 0.5rem;
     font-size: 1.25rem; /* A bit larger for visibility */
 }
+
+/* Chore row styles */
+.chore-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--pico-spacing);
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    margin-bottom: var(--pico-spacing);
+    cursor: pointer;
+}
+
+.chore-row:hover {
+    background-color: var(--pico-muted-background-color);
+}
+
+.chore-title {
+    flex-grow: 1;
+    margin-left: 1rem;
+}
+
+.chore-assignee {
+    min-width: 100px;
+    text-align: right;
+    margin-right: 1rem;
+}
+
+.chore-priority {
+    font-size: 1.25rem;
+}

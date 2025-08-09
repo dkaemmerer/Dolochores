@@ -1,75 +1,26 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<section>
-    <h2>Add a New Chore</h2>
-    <form id="add-chore-form">
-        <div class="grid">
-            <label for="title">
-                Title
-                <input type="text" id="title" name="title" required>
-            </label>
-            <label for="user_id">
-                Assignee
-                <select id="user_id" name="user_id" required>
-                    {% for user in users %}
-                    <option value="{{ user.id }}">{{ user.name }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-        </div>
-        <div class="grid">
-            <label for="category">
-                Category
-                <input type="text" id="category" name="category">
-            </label>
-            <label for="frequency">
-                Frequency (days)
-                <input type="number" id="frequency" name="frequency" required>
-            </label>
-            <label for="last_completed">
-                Last Completed
-                <input type="date" id="last_completed" name="last_completed" required>
-            </label>
-        </div>
-        <label for="notes">Notes</label>
-        <textarea id="notes" name="notes" rows="3"></textarea>
-        <button type="submit">Add Chore</button>
-    </form>
-</section>
 
 <section>
+    <form method="get" action="{{ url_for('all_chores') }}">
+        <div class="grid">
+            <input type="search" id="search" name="q" placeholder="Search chores..." value="{{ request.args.get('q', '') }}">
+            <button type="submit" class="secondary">Search</button>
+        </div>
+    </form>
     <h2>All Chores</h2>
+    <div class="chores-list">
     {% for chore in chores %}
-    <article class="chore-card" data-chore-id="{{ chore.id }}">
-        <header>
-            <h3 class="chore-title {{ chore.status | lower | replace(' ', '-') }}">
-                {% if chore.is_priority %}
-                <span title="High Priority">⭐</span>
-                {% endif %}
-                {{ chore.title }}
-            </h3>
-        </header>
-        <p>
-            <strong>Assignee:</strong> {{ chore.assignee.name }} |
-            <strong>Category:</strong> {{ chore.category | default('N/A') }} |
-            <strong>Status:</strong> <span class="status-{{ chore.status | lower | replace(' ', '-') }}">{{ chore.status }}</span> |
-            <strong>Next Due:</strong> {{ chore.next_due.strftime('%Y-%m-%d') if chore.next_due else 'N/A' }}
-        </p>
-        {% if chore.notes %}
-        <blockquote>{{ chore.notes }}</blockquote>
-        {% endif %}
-        <footer>
-            <div class="grid">
-                <button class="contrast complete-btn">Mark Complete</button>
-                <button class="secondary priority-btn">Toggle Priority</button>
-                <button class="secondary outline delete-btn">Delete</button>
-                <button class="contrast outline undo-btn" style="display:none;">Undo Complete</button>
-            </div>
-        </footer>
-    </article>
+    <div class="chore-row" data-chore-id="{{ chore.id }}" data-target="chore-detail-modal" onclick="openChoreDetail(event)">
+        <span class="chore-priority">{% if chore.is_priority %}⭐{% endif %}</span>
+        <span class="chore-title">{{ chore.title }}</span>
+        <span class="chore-assignee">{{ chore.assignee.name }}</span>
+        <span class="chore-status status-{{ chore.status | lower | replace(' ', '-') }}">{{ chore.status }}</span>
+    </div>
     {% else %}
-    <p>No chores found. Add one above!</p>
+    <p>No chores found.</p>
     {% endfor %}
+    </div>
 </section>
 {% endblock %}

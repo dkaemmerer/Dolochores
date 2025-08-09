@@ -1,3 +1,48 @@
+// Modal toggling function
+function toggleModal(event) {
+    event.preventDefault();
+    const modal = document.getElementById(event.currentTarget.dataset.target);
+    if (modal) {
+        modal.open ? modal.close() : modal.showModal();
+    }
+}
+
+async function openChoreDetail(event) {
+    const choreRow = event.currentTarget;
+    const choreId = choreRow.dataset.choreId;
+
+    try {
+        const response = await fetch(`/api/chores/${choreId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch chore details');
+        }
+        const chore = await response.json();
+
+        // Populate modal
+        document.getElementById('chore-detail-title').textContent = chore.title;
+        const content = document.getElementById('chore-detail-content');
+        content.innerHTML = `
+            <p><strong>Assignee:</strong> ${chore.assignee}</p>
+            <p><strong>Category:</strong> ${chore.category || 'N/A'}</p>
+            <p><strong>Status:</strong> <span class="status-${chore.status.toLowerCase().replace(' ', '-')}">${chore.status}</span></p>
+            <p><strong>Next Due:</strong> ${chore.next_due ? new Date(chore.next_due).toLocaleDateString() : 'N/A'}</p>
+            <p><strong>Frequency:</strong> Every ${chore.frequency} days</p>
+            <p><strong>Last Completed:</strong> ${new Date(chore.last_completed).toLocaleDateString()}</p>
+            ${chore.notes ? `<blockquote>${chore.notes}</blockquote>` : ''}
+        `;
+
+        // Set up delete button
+        const deleteBtn = document.getElementById('chore-detail-delete-btn');
+        deleteBtn.dataset.choreId = choreId;
+
+        // Open modal
+        toggleModal({ preventDefault: () => {}, currentTarget: { dataset: { target: 'chore-detail-modal' } } });
+    } catch (err) {
+        console.error('Error opening chore detail:', err);
+        alert('Failed to load chore details. Please try again.');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- Add Chore Form ---
@@ -28,36 +73,77 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Chore Actions ---
-    const choreList = document.querySelector('.chores-list');
-    if (choreList) {
-        choreList.addEventListener('click', async (e) => {
-            const target = e.target;
-            const choreCard = target.closest('.chore-card');
-            if (!choreCard) return;
+    // --- Swipe Actions for Chore Rows ---
+    document.querySelectorAll('.chore-row').forEach(row => {
+        let touchstartX = 0;
+        let touchendX = 0;
+        let isSwiping = false;
 
-            const choreId = choreCard.dataset.choreId;
+        row.addEventListener('touchstart', e => {
+            touchstartX = e.changedTouches[0].screenX;
+            isSwiping = true;
+        }, { passive: true });
 
-            // Complete Chore
-            if (target.classList.contains('complete-btn')) {
-                await handleAction(`/api/chores/${choreId}/complete`, 'POST', 'Chore marked as complete.');
+        row.addEventListener('touchend', e => {
+            if (!isSwiping) return;
+            isSwiping = false;
+            touchendX = e.changedTouches[0].screenX;
+            handleSwipe(row, touchstartX, touchendX);
+        });
+    });
+
+    function handleSwipe(row, startX, endX) {
+        const choreId = row.dataset.choreId;
+        const swipeThreshold = 50; // pixels
+        const deltaX = endX - startX;
+
+        if (Math.abs(deltaX) > swipeThreshold) {
+            // Prevent the click event from firing
+            row.style.pointerEvents = 'none';
+
+            if (deltaX > 0) {
+                // Swipe Right: Mark Complete
+                handleAction(`/api/chores/${choreId}/complete`, 'POST', 'Chore marked as complete.');
+            } else {
+                // Swipe Left: Toggle Priority
+                handleAction(`/api/chores/${choreId}/toggle-priority`, 'POST', 'Priority toggled.');
             }
 
-            // Toggle Priority
-            if (target.classList.contains('priority-btn')) {
-                await handleAction(`/api/chores/${choreId}/toggle-priority`, 'POST', 'Priority toggled.');
-            }
+            // Re-enable clicks after a short delay
+            setTimeout(() => {
+                row.style.pointerEvents = 'auto';
+            }, 300);
+        }
+    }
 
-            // Delete Chore
-            if (target.classList.contains('delete-btn')) {
-                if (confirm('Are you sure you want to delete this chore?')) {
-                    await handleAction(`/api/chores/${choreId}`, 'DELETE', 'Chore deleted.');
-                }
+    const deleteBtn = document.getElementById('chore-detail-delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const choreId = e.currentTarget.dataset.choreId;
+            if (choreId && confirm('Are you sure you want to delete this chore?')) {
+                await handleAction(`/api/chores/${choreId}`, 'DELETE', 'Chore deleted.');
             }
+        });
+    }
 
-            // Undo Complete
-            if (target.classList.contains('undo-btn')) {
-                await handleAction(`/api/chores/${choreId}/undo`, 'POST', 'Completion undone.');
+    const emailChoresBtn = document.getElementById('email-chores-btn');
+    if (emailChoresBtn) {
+        emailChoresBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            emailChoresBtn.innerHTML = '<i>Sending...</i>';
+            emailChoresBtn.setAttribute('aria-busy', 'true');
+
+            try {
+                const response = await fetch('/api/email-chores', { method: 'POST' });
+                const result = await response.json();
+                alert(result.message);
+            } catch (err) {
+                console.error('Failed to send email:', err);
+                alert('An error occurred while sending the email.');
+            } finally {
+                emailChoresBtn.textContent = 'Email Chores List';
+                emailChoresBtn.removeAttribute('aria-busy');
             }
         });
     }

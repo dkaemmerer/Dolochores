@@ -16,6 +16,17 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
+# Configure Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') # Set in your environment
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD') # Set in your environment
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
+
+from flask_mail import Mail, Message
+mail = Mail(app)
+
 # --- Models ---
 
 class User(db.Model):
@@ -67,24 +78,30 @@ class Chore(db.Model):
 
 # --- View Routes ---
 
+@app.context_processor
+def inject_users():
+    return dict(users=User.query.all())
+
 @app.route('/')
 def all_chores():
-    # This is a bit complex. The goal is to sort by status string.
-    # A CASE statement is the most efficient way to do this in the database.
-    status_order = case(
-        {"Overdue": 1, "Due Soon": 2, "Completed Recently": 3},
-        value=Chore.status,
-        else_=4
-    )
-    # The above is not directly supported by SQLAlchemy's ORM property.
-    # A hybrid property might work, but for now, let's sort in Python.
-    chores = Chore.query.all()
+    search_query = request.args.get('q')
+
+    query = Chore.query.join(User) # Join with User to search by assignee name
+    if search_query:
+        search_term = f'%{search_query}%'
+        query = query.filter(
+            Chore.title.ilike(search_term) |
+            Chore.notes.ilike(search_term) |
+            User.name.ilike(search_term)
+        )
+
+    chores = query.all()
 
     # Custom sort key for status
     status_map = {"Overdue": 1, "Due Soon": 2, "Completed Recently": 3}
     chores.sort(key=lambda c: (status_map.get(c.status, 4), not c.is_priority, c.next_due, -c.frequency))
 
-    return render_template('index.html', chores=chores, users=User.query.all(), title="All Chores")
+    return render_template('index.html', chores=chores, title="All Chores")
 
 @app.route('/my-chores/<username>')
 def my_chores(username):
@@ -100,6 +117,23 @@ def priorities():
     return render_template('priorities.html', chores=chores, title="Priority Chores")
 
 # --- API Routes ---
+
+@app.route('/api/chores/<int:chore_id>', methods=['GET'])
+def get_chore(chore_id):
+    chore = Chore.query.get_or_404(chore_id)
+    return jsonify({
+        'id': chore.id,
+        'title': chore.title,
+        'user_id': chore.user_id,
+        'assignee': chore.assignee.name,
+        'category': chore.category,
+        'frequency': chore.frequency,
+        'last_completed': chore.last_completed.isoformat(),
+        'is_priority': chore.is_priority,
+        'notes': chore.notes,
+        'next_due': chore.next_due.isoformat() if chore.next_due else None,
+        'status': chore.status
+    })
 
 @app.route('/api/chores', methods=['POST'])
 def add_chore():
@@ -175,6 +209,62 @@ def edit_chore(chore_id):
         return jsonify({'message': 'Chore updated successfully'})
     except (ValueError, TypeError) as e:
         return jsonify({'message': f'Invalid data: {e}'}), 400
+
+from collections import defaultdict
+
+@app.route('/api/email-chores', methods=['POST'])
+def email_chores():
+    try:
+        chores = Chore.query.all()
+
+        # Group chores by assignee
+        chores_by_assignee = defaultdict(list)
+        for chore in chores:
+            chores_by_assignee[chore.assignee.name].append(chore)
+
+        # Sort chores within each group and prepare email body
+        email_body = ""
+
+        # Sort assignees by name
+        sorted_assignees = sorted(chores_by_assignee.keys())
+
+        for assignee_name in sorted_assignees:
+            email_body += f"--- {assignee_name} ---\n"
+
+            # Sort chores: priority first, then by newest due date
+            # To sort by reverse chronological due date, we reverse the sort on next_due
+            priority_chores = sorted(
+                [c for c in chores_by_assignee[assignee_name] if c.is_priority],
+                key=lambda c: c.next_due if c.next_due else date.min,
+                reverse=True
+            )
+            non_priority_chores = sorted(
+                [c for c in chores_by_assignee[assignee_name] if not c.is_priority],
+                key=lambda c: c.next_due if c.next_due else date.min,
+                reverse=True
+            )
+
+            sorted_chores = priority_chores + non_priority_chores
+
+            for chore in sorted_chores:
+                due_date = chore.next_due.strftime('%Y-%m-%d') if chore.next_due else 'N/A'
+                priority_marker = "⭐ " if chore.is_priority else ""
+                email_body += f"  {priority_marker}{chore.title} (Due: {due_date})\n"
+
+            email_body += "\n"
+
+        # Send email
+        msg = Message(
+            subject="Today's Chores",
+            recipients=["dolohome@gmail.com"],
+            body=email_body
+        )
+        mail.send(msg)
+
+        return jsonify({'message': 'Email sent successfully!'})
+    except Exception as e:
+        app.logger.error(f"Failed to send email: {e}")
+        return jsonify({'message': 'Failed to send email'}), 500
 
 
 import csv
