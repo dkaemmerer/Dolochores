@@ -1,5 +1,5 @@
 async function openChoreDetail(event) {
-    const choreRow = event.currentTarget.closest('.collection-item');
+    const choreRow = event.currentTarget.closest('.chore-row');
     const choreId = choreRow.dataset.choreId;
 
     try {
