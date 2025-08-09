@@ -3,6 +3,7 @@
 {% block content %}
 <section>
     <h2>{{ title }}</h2>
-    {% include '_chores_list.html' no_chores_message='No priority chores found.' %}
+    {% set no_chores_message = 'No priority chores found.' %}
+    {% include '_chores_list.html' %}
 </section>
 {% endblock %}

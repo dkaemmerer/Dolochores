@@ -3,17 +3,27 @@
 {% block content %}
 <section>
     <h2>Search Chores</h2>
-    <form method="get" action="{{ url_for('search') }}">
-        <div class="grid">
-            <input type="search" id="search" name="q" placeholder="Search by title, assignee, or notes..." value="{{ request.args.get('q', '') }}" autofocus>
-            <button type="submit">Search</button>
+    <form method="get" action="{{ url_for('search') }}" class="section">
+        <div class="row">
+            <div class="input-field col s9">
+                <i class="material-icons prefix">search</i>
+                <input type="search" id="search" name="q" value="{{ request.args.get('q', '') }}" class="validate" autofocus>
+                <label for="search">Search by title, assignee, or notes...</label>
+            </div>
+            <div class="input-field col s3">
+                <button class="btn waves-effect waves-light" type="submit">Search
+                    <i class="material-icons right">send</i>
+                </button>
+            </div>
         </div>
     </form>
 
     {% if chores is defined %}
-        <hr>
-        <h3>Search Results</h3>
-        {% include '_chores_list.html' %}
+        <div class="divider"></div>
+        <div class="section">
+            <h3>Search Results</h3>
+            {% include '_chores_list.html' %}
+        </div>
     {% endif %}
 </section>
 {% endblock %}

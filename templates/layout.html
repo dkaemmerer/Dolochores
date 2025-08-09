@@ -1,133 +1,152 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <title>DoloChores</title>
   </head>
   <body>
-    <main class="container">
+    <header>
         <nav>
-            <ul>
-                <li><strong>DoloChores</strong></li>
-            </ul>
-            <ul>
-                <li><a href="{{ url_for('all_chores') }}">All Chores</a></li>
-                <li><a href="{{ url_for('priorities') }}">Priorities</a></li>
-                <li>
-                    <details class="dropdown">
-                        <summary>My Chores</summary>
-                        <ul class="dropdown-menu">
-                            <li><a href="{{ url_for('my_chores', username='Dan') }}">Dan's Chores</a></li>
-                            <li><a href="{{ url_for('my_chores', username='Kim') }}">Kim's Chores</a></li>
-                            <li><a href="{{ url_for('my_chores', username='Katie') }}">Katie's Chores</a></li>
-                        </ul>
-                    </details>
-                </li>
-                <li><a href="{{ url_for('search') }}" role="button" class="contrast outline" data-tooltip="Search Chores">&#128269;</a></li>
-                <li>
-                    <details class="dropdown">
-                        <summary role="button" class="contrast outline">&#8942;</summary>
-                        <ul class="dropdown-menu">
-                            <li><a href="#" data-target="add-chore-modal" onclick="toggleModal(event)">Add Chore</a></li>
-                            <li><a href="#" id="email-chores-btn">Email Chores List</a></li>
-                        </ul>
-                    </details>
-                </li>
-            </ul>
+            <div class="nav-wrapper">
+                <a href="{{ url_for('all_chores') }}" class="brand-logo" style="padding-left: 15px;">DoloChores</a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <li><a href="{{ url_for('all_chores') }}">All Chores</a></li>
+                    <li><a href="{{ url_for('priorities') }}">Priorities</a></li>
+                    <li><a class="dropdown-trigger" href="#!" data-target="my-chores-dropdown">My Chores<i class="material-icons right">arrow_drop_down</i></a></li>
+                    <li><a href="{{ url_for('search') }}"><i class="material-icons">search</i></a></li>
+                    <li><a class="dropdown-trigger" href="#!" data-target="more-actions-dropdown"><i class="material-icons">more_vert</i></a></li>
+                </ul>
+            </div>
         </nav>
-        <hr>
+
+        <!-- Dropdown Structures -->
+        <ul id="my-chores-dropdown" class="dropdown-content">
+            <li><a href="{{ url_for('my_chores', username='Dan') }}">Dan's Chores</a></li>
+            <li><a href="{{ url_for('my_chores', username='Kim') }}">Kim's Chores</a></li>
+            <li><a href="{{ url_for('my_chores', username='Katie') }}">Katie's Chores</a></li>
+        </ul>
+        <ul id="more-actions-dropdown" class="dropdown-content">
+            <li><a href="#" data-target="add-chore-modal" class="modal-trigger">Add Chore</a></li>
+            <li><a href="#" id="email-chores-btn">Email Chores List</a></li>
+        </ul>
+    </header>
+
+    <main class="container">
         {% block content %}{% endblock %}
     </main>
 
     <!-- Add Chore Modal -->
-    <dialog id="add-chore-modal">
-      <article>
-        <header>
-          <a href="#close" aria-label="Close" class="close" data-target="add-chore-modal" onclick="toggleModal(event)"></a>
-          <h2>Add a New Chore</h2>
-        </header>
-        <form id="add-chore-form">
-            <div class="grid">
-                <label for="title">
-                    Title
-                    <input type="text" id="title" name="title" required>
-                </label>
-                <label for="user_id">
-                    Assignee
-                    <select id="user_id" name="user_id" required>
-                        {% for user in users %}
-                        <option value="{{ user.id }}">{{ user.name }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
-            </div>
-            <div class="grid">
-                <label for="category">
-                    Category
-                    <select id="category" name="category">
-                        <option value="all rooms">all rooms</option>
-                        <option value="bathroom">bathroom</option>
-                        <option value="bedrooms">bedrooms</option>
-                        <option value="counters">counters</option>
-                        <option value="floors">floors</option>
-                        <option value="garage">garage</option>
-                        <option value="hvac">hvac</option>
-                        <option value="kitchen">kitchen</option>
-                        <option value="laundry">laundry</option>
-                        <option value="outside">outside</option>
-                        <option value="plumbing">plumbing</option>
-                        <option value="riley">riley</option>
-                    </select>
-                </label>
-                <label for="frequency">
-                    Frequency (days)
-                    <select id="frequency" name="frequency" required>
-                        <option value="14">14</option>
-                        <option value="30">30</option>
-                        <option value="90">90</option>
-                        <option value="182">182</option>
-                        <option value="365">365</option>
-                        <option value="730">730</option>
-                        <option value="1095">1095</option>
-                        <option value="2555">2555</option>
-                    </select>
-                </label>
-                <label for="last_completed">
-                    Last Completed
-                    <input type="date" id="last_completed" name="last_completed" required>
-                </label>
-            </div>
-            <label for="notes">Notes</label>
-            <textarea id="notes" name="notes" rows="3"></textarea>
-            <button type="submit">Add Chore</button>
-        </form>
-      </article>
-    </dialog>
+    <div id="add-chore-modal" class="modal">
+        <div class="modal-content">
+            <h4>Add a New Chore</h4>
+            <form id="add-chore-form">
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input type="text" id="title" name="title" required>
+                        <label for="title">Title</label>
+                    </div>
+                    <div class="input-field col s6">
+                        <select id="user_id" name="user_id" required>
+                            {% for user in users %}
+                            <option value="{{ user.id }}">{{ user.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <label>Assignee</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s4">
+                        <select id="category" name="category">
+                            <option value="all rooms">all rooms</option>
+                            <option value="bathroom">bathroom</option>
+                            <option value="bedrooms">bedrooms</option>
+                            <option value="counters">counters</option>
+                            <option value="floors">floors</option>
+                            <option value="garage">garage</option>
+                            <option value="hvac">hvac</option>
+                            <option value="kitchen">kitchen</option>
+                            <option value="laundry">laundry</option>
+                            <option value="outside">outside</option>
+                            <option value="plumbing">plumbing</option>
+                            <option value="riley">riley</option>
+                        </select>
+                        <label>Category</label>
+                    </div>
+                    <div class="input-field col s4">
+                        <select id="frequency" name="frequency" required>
+                            <option value="14">14</option>
+                            <option value="30">30</option>
+                            <option value="90">90</option>
+                            <option value="182">182</option>
+                            <option value="365">365</option>
+                            <option value="730">730</option>
+                            <option value="1095">1095</option>
+                            <option value="2555">2555</option>
+                        </select>
+                        <label>Frequency (days)</label>
+                    </div>
+                    <div class="input-field col s4">
+                        <input type="date" id="last_completed" name="last_completed" class="datepicker" required>
+                        <label for="last_completed">Last Completed</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <textarea id="notes" name="notes" class="materialize-textarea"></textarea>
+                        <label for="notes">Notes</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+                    <button type="submit" class="btn waves-effect waves-light">Add Chore</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Chore Detail Modal -->
-    <dialog id="chore-detail-modal">
-      <article>
-        <header>
-          <a href="#close" aria-label="Close" class="close" data-target="chore-detail-modal" onclick="toggleModal(event)"></a>
-          <h2 id="chore-detail-title">Chore Details</h2>
-        </header>
+    <div id="chore-detail-modal" class="modal">
+      <div class="modal-content">
+        <h4 id="chore-detail-title">Chore Details</h4>
         <div id="chore-detail-content">
-            <!-- Chore details will be populated here -->
+            <!-- Chore details will be populated here by JS -->
         </div>
-        <footer>
-            <details role="list" dir="rtl">
-                <summary aria-haspopup="listbox" role="button" class="contrast outline">Actions</summary>
-                <ul role="listbox">
-                    <li><a href="#" id="chore-detail-delete-btn">Delete</a></li>
-                </ul>
-            </details>
-        </footer>
-      </article>
-    </dialog>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" id="chore-detail-delete-btn" class="waves-effect waves-red btn-flat">Delete</a>
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+      </div>
+    </div>
 
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize dropdowns
+            var dropdowns = document.querySelectorAll('.dropdown-trigger');
+            M.Dropdown.init(dropdowns, {});
+
+            // Initialize modals
+            var modals = document.querySelectorAll('.modal');
+            M.Modal.init(modals, {});
+
+            // Initialize select lists
+            var selects = document.querySelectorAll('select');
+            M.FormSelect.init(selects, {});
+
+            // Initialize date pickers
+            var datepickers = document.querySelectorAll('.datepicker');
+            M.Datepicker.init(datepickers, {
+                format: 'yyyy-mm-dd',
+                autoClose: true
+            });
+        });
+    </script>
   </body>
 </html>
