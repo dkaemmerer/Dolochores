@@ -94,7 +94,9 @@ def my_chores(username):
 
 @app.route('/priorities')
 def priorities():
-    chores = Chore.query.filter_by(is_priority=True).order_by(Chore.next_due).all()
+    priority_chores = Chore.query.filter_by(is_priority=True).all()
+    # Sort in Python using the 'next_due' property, handling potential None values
+    chores = sorted(priority_chores, key=lambda c: c.next_due if c.next_due else date.max)
     return render_template('priorities.html', chores=chores, title="Priority Chores")
 
 # --- API Routes ---
