@@ -1,5 +1,5 @@
 async function openChoreDetail(event) {
-    const choreRow = event.currentTarget;
+    const choreRow = event.currentTarget.closest('.collection-item');
     const choreId = choreRow.dataset.choreId;
 
     try {
@@ -18,7 +18,7 @@ async function openChoreDetail(event) {
             <p><strong>Status:</strong> <span class="status-${chore.status.toLowerCase().replace(' ', '-')}">${chore.status}</span></p>
             <p><strong>Next Due:</strong> ${chore.next_due ? new Date(chore.next_due).toLocaleDateString() : 'N/A'}</p>
             <p><strong>Frequency:</strong> Every ${chore.frequency} days</p>
-            <p><strong>Last Completed:</strong> ${new Date(chore.last_completed).toLocaleDateString()}</p>
+            <p><strong>Last Completed:</strong> ${chore.last_completed ? new Date(chore.last_completed).toLocaleDateString() : 'N/A'}</p>
             ${chore.notes ? `<blockquote>${chore.notes}</blockquote>` : ''}
         `;
 
@@ -66,6 +66,83 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
+    // --- Swipe Actions for Chore Rows ---
+    document.querySelectorAll('.collection-item[data-chore-id]').forEach(row => {
+        const fg = row.querySelector('.chore-row-fg');
+        const bg = row.querySelector('.chore-row-bg');
+        const rightIcon = bg.querySelector('.swipe-right-icon');
+        const leftIcon = bg.querySelector('.swipe-left-icon');
+
+        let touchstartX = 0;
+        let touchmoveX = 0;
+        let deltaX = 0;
+        let isSwiping = false;
+        const swipeThreshold = 80;
+
+        row.addEventListener('touchstart', e => {
+            if (e.target.closest('a, button')) return;
+            touchstartX = e.changedTouches[0].screenX;
+            isSwiping = true;
+            fg.classList.add('swiping');
+        }, { passive: true });
+
+        row.addEventListener('touchmove', e => {
+            if (!isSwiping) return;
+            touchmoveX = e.changedTouches[0].screenX;
+            deltaX = touchmoveX - touchstartX;
+
+            // Prevent vertical scroll while swiping
+            if (Math.abs(deltaX) > 10) {
+                e.preventDefault();
+            }
+
+            fg.style.transform = `translateX(${deltaX}px)`;
+
+            if (deltaX > 0) { // Swiping right (complete)
+                bg.style.backgroundColor = '#4caf50'; // green
+                rightIcon.style.opacity = Math.min(deltaX / swipeThreshold, 1);
+                leftIcon.style.opacity = 0;
+            } else { // Swiping left (priority)
+                bg.style.backgroundColor = '#ffc107'; // amber
+                leftIcon.style.opacity = Math.min(Math.abs(deltaX) / swipeThreshold, 1);
+                rightIcon.style.opacity = 0;
+            }
+
+        }, { passive: false });
+
+        row.addEventListener('touchend', e => {
+            if (!isSwiping) return;
+            isSwiping = false;
+            fg.classList.remove('swiping');
+
+            if (Math.abs(deltaX) > swipeThreshold) {
+                handleSwipeAction(row, deltaX);
+            } else {
+                fg.classList.add('snap-back');
+                fg.style.transform = '';
+                bg.style.backgroundColor = '';
+                rightIcon.style.opacity = 0;
+                leftIcon.style.opacity = 0;
+            }
+            deltaX = 0;
+
+            setTimeout(() => {
+                if (fg) fg.classList.remove('snap-back');
+            }, 300);
+        });
+    });
+
+    function handleSwipeAction(row, deltaX) {
+        const choreId = row.dataset.choreId;
+        if (!choreId) return;
+
+        if (deltaX > 0) {
+            handleAction(`/api/chores/${choreId}/complete`, 'POST', 'Chore marked as complete.');
+        } else {
+            handleAction(`/api/chores/${choreId}/toggle-priority`, 'POST', 'Priority toggled.');
+        }
+    }
 
     const deleteBtn = document.getElementById('chore-detail-delete-btn');
     if (deleteBtn) {

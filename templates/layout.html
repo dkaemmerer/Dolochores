@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Materialize CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     <title>DoloChores</title>
   </head>
   <body>
@@ -14,6 +15,7 @@
         <nav>
             <div class="nav-wrapper">
                 <a href="{{ url_for('all_chores') }}" class="brand-logo" style="padding-left: 15px;">DoloChores</a>
+                <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                 <ul id="nav-mobile" class="right hide-on-med-and-down">
                     <li><a href="{{ url_for('all_chores') }}">All Chores</a></li>
                     <li><a href="{{ url_for('priorities') }}">Priorities</a></li>
@@ -24,7 +26,22 @@
             </div>
         </nav>
 
-        <!-- Dropdown Structures -->
+        <!-- Sidenav Structure -->
+        <ul id="mobile-nav" class="sidenav">
+            <li><a href="{{ url_for('all_chores') }}">All Chores</a></li>
+            <li><a href="{{ url_for('priorities') }}">Priorities</a></li>
+            <li class="divider"></li>
+            <li><a class="subheader">My Chores</a></li>
+            <li><a href="{{ url_for('my_chores', username='Dan') }}">Dan's Chores</a></li>
+            <li><a href="{{ url_for('my_chores', username='Kim') }}">Kim's Chores</a></li>
+            <li><a href="{{ url_for('my_chores', username='Katie') }}">Katie's Chores</a></li>
+            <li class="divider"></li>
+            <li><a href="{{ url_for('search') }}">Search</a></li>
+            <li><a href="#" data-target="add-chore-modal" class="modal-trigger">Add Chore</a></li>
+            <li><a href="#" id="email-chores-btn-mobile">Email Chores List</a></li>
+        </ul>
+
+        <!-- Dropdown Structures for Desktop -->
         <ul id="my-chores-dropdown" class="dropdown-content">
             <li><a href="{{ url_for('my_chores', username='Dan') }}">Dan's Chores</a></li>
             <li><a href="{{ url_for('my_chores', username='Kim') }}">Kim's Chores</a></li>
@@ -128,6 +145,10 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Sidenav
+            var sidenavs = document.querySelectorAll('.sidenav');
+            M.Sidenav.init(sidenavs, {});
+
             // Initialize dropdowns
             var dropdowns = document.querySelectorAll('.dropdown-trigger');
             M.Dropdown.init(dropdowns, {});
