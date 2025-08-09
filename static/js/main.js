@@ -8,7 +8,7 @@ function toggleModal(event) {
 }
 
 async function openChoreDetail(event) {
-    const choreRow = event.currentTarget;
+    const choreRow = event.currentTarget.closest('.chore-row');
     const choreId = choreRow.dataset.choreId;
 
     try {
