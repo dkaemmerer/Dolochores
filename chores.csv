@@ -1,0 +1,132 @@
+choreID	title	assignee	category	frequency	lastCompleted	nextDue	isPriority	notes	previousLastCompleted
+chore_119	riley heartgard	Dan	riley	30	Aug 1, 2025	Aug 31, 2025	FALSE		Jul 1, 2025
+chore_124	clean out dishwasher filter and seal	Dan	kitchen	30	Aug 6, 2025	Sep 5, 2025	FALSE		Aug 3, 2025
+86769bc1	riley bath	Dan	riley	30	Aug 3, 2025	Sep 2, 2025	FALSE		Jul 1, 2025
+chore_087	clean coffee maker	Dan	kitchen	90	Aug 2, 2025	Oct 31, 2025	FALSE		May 12, 2025
+chore_129	restock toilet paper	Katie	bathroom	14	Aug 2, 2025	Aug 16, 2025	FALSE		Jul 27, 2025
+chore_120	riley fleas	Dan + Kim	riley	30	Jul 31, 2025	Aug 30, 2025	FALSE		Jul 1, 2025
+chore_101	clean toilets	Kim	bathroom	30	Jul 30, 2025	Aug 29, 2025	FALSE		Jul 6, 2025
+chore_099	clean stove	Kim	kitchen	30	Jul 27, 2025	Aug 26, 2025	FALSE		Jul 27, 2025
+chore_073	check tire pressure	Dan	outside	90	Jul 27, 2025	Oct 25, 2025	FALSE		Jul 27, 2025
+chore_074	clean vacuum filters	Dan	all rooms	90	Jul 27, 2025	Oct 25, 2025	FALSE		Jul 27, 2025
+chore_075	clean vacuum rollers	Dan	all rooms	90	Jul 27, 2025	Oct 25, 2025	FALSE		Jul 27, 2025
+chore_076	clean out stove hood vent and grease traps	Dan	kitchen	90	Jul 27, 2025	Oct 25, 2025	FALSE	Use dawn power wash spray or soak in soapy water and scrub with a brush	Jul 27, 2025
+chore_077	clean stove grates, burner caps, and burner heads	Dan	kitchen	90	Jul 27, 2025	Oct 25, 2025	FALSE	grates and caps can be put in dishwasher, but stainless steel burner heads should be soaked in soapy water and not put in the dishwasher	Jul 27, 2025
+chore_079	Inspect washer hoses	Dan	laundry	90	Jul 27, 2025	Oct 25, 2025	FALSE	Replace Dec 2027 - (replace drain hose every 4 years, and braided inlet hoses every 5-8 years, or just keep an eye on then to see if they leak)	Jul 27, 2025
+chore_040	clean window and slider weep holes	Dan	outside	182	Jul 27, 2025	Jan 25, 2026	FALSE	incl. 2nd story? Weep underneath windows can get clogged with dust occasionally and should be cleaned out with a paper clip https://www.summerwindsnursery.com/az/inspire/blog/drip-irrigation-guide/	Jul 27, 2025
+chore_041	adjust exterior door thresholds and door sweeps	Dan	outside	182	Jul 27, 2025	Jan 25, 2026	FALSE	(with warranty or if problem only)	Jul 27, 2025
+chore_107	remove hair from shower drain	Dan	bathroom	30	Jul 27, 2025	Aug 26, 2025	FALSE		Jul 27, 2025
+chore_113	leaf blow front and backyards	Dan	outside	30	Jul 27, 2025	Aug 26, 2025	FALSE		Jul 27, 2025
+chore_118	check A/C drip	Dan	hvac	14	Jul 27, 2025	Aug 10, 2025	FALSE	Air Conditioner shouldn't ever be dripping underneath hot water heater on outside of house. If drip comes out of roof drip that's bad and means it's clogged somewhere	Jul 27, 2025
+chore_130	put away laundry	Katie	bedrooms	14	Jul 27, 2025	Aug 10, 2025	TRUE		Jul 27, 2025
+chore_100	check plumbing for leaks	Kim	plumbing	30	Jul 26, 2025	Aug 25, 2025	FALSE		Jul 26, 2025
+chore_109	clean outdoor table tops and seating	Katie	outside	30	Jul 26, 2025	Aug 25, 2025	FALSE		Jul 26, 2025
+chore_110	dust railings and banister	Katie	all rooms	30	Jul 26, 2025	Aug 25, 2025	FALSE		Jul 26, 2025
+chore_082	check to see if any zipties on pergola need replacing	Dan	outside	90	Jul 26, 2025	Oct 24, 2025	FALSE		Jul 26, 2025
+chore_114	check salt reservoir in water softener	Dan	plumbing	30	Jul 26, 2025	Aug 25, 2025	FALSE		Jul 26, 2025
+chore_080	check fire extinguisher pressures	Katie	all rooms	90	Jul 26, 2025	Oct 24, 2025	FALSE		Jul 26, 2025
+chore_128	clear off drop-zone	Kim	kitchen	30	Jul 25, 2025	Aug 24, 2025	FALSE	weekly?	Jul 25, 2025
+chore_127	wipe down dining table with water	Kim	kitchen	30	Jul 24, 2025	Aug 23, 2025	FALSE	weekly?	Jul 24, 2025
+chore_123	hose down the A/C units	Dan	hvac	30	Jul 23, 2025	Aug 22, 2025	FALSE		Jul 23, 2025
+chore_125	weed front and backyard	Dan	outside	30	Jul 23, 2025	Aug 22, 2025	FALSE		Jul 23, 2025
+chore_126	riley nail trim	Dan + Kim	riley	30	Jul 23, 2025	Aug 22, 2025	FALSE		Jul 23, 2025
+chore_057	prune hibiscus	Dan	outside	182	Jul 23, 2025	Jan 21, 2026	FALSE		Jul 23, 2025
+chore_058	keep an eye on the far north wall of the dining room	Dan	kitchen	182	Jul 23, 2025	Jan 21, 2026	FALSE	Look where it meets the granite backsplash since the wall is flexing out	Jul 23, 2025
+chore_122	wash sheets (master bedroom + Katie's)	Kim	bedrooms	30	Jul 19, 2025	Aug 18, 2025	FALSE	biweekly?	Jul 19, 2025
+chore_056	change LG fridge air filter	Dan	kitchen	182	Jul 16, 2025	Jan 14, 2026	FALSE		Jul 16, 2025
+chore_121	riley haircut	Dan	riley	30	Jul 15, 2025	Aug 14, 2025	FALSE		Jul 15, 2025
+chore_095	sharpen frequent use knives	Dan	kitchen	90	Jul 12, 2025	Oct 10, 2025	FALSE		Jul 12, 2025
+chore_094	clean washer tub	Katie	laundry	90	Jul 6, 2025	Oct 4, 2025	FALSE		Jul 6, 2025
+chore_102	clean bathroom sinks	Kim	bathroom	30	Jul 1, 2025	Jul 31, 2025	TRUE		Jul 1, 2025
+chore_092	replace air duct filters	Dan	hvac	90	Jul 1, 2025	Sep 29, 2025	FALSE		Jul 1, 2025
+chore_093	check smoke detector batteries	Dan	all rooms	90	Jul 1, 2025	Sep 29, 2025	FALSE		Jul 1, 2025
+chore_117	shop vac A/C drip pipes	Dan	hvac	30	Jun 30, 2025	Jul 30, 2025	TRUE		Jun 30, 2025
+chore_115	clean granite with spray in kitchen	Kim	kitchen	30	Jun 28, 2025	Jul 28, 2025	FALSE		Jun 28, 2025
+chore_116	clean granite with spray in bathrooms	Kim	counters	30	Jun 28, 2025	Jul 28, 2025	FALSE		Jun 28, 2025
+chore_090	polish granite in bathrooms	Kim	counters	90	Jun 28, 2025	Sep 26, 2025	FALSE		Jun 28, 2025
+chore_091	polish granite in kitchen	Kim	counters	90	Jun 28, 2025	Sep 26, 2025	FALSE		Jun 28, 2025
+chore_055	rotate (not flip) all mattresses	Kim	bedrooms	182	Jun 22, 2025	Dec 21, 2025	FALSE		Jun 22, 2025
+chore_054	replace emergency water reservoir tank	Dan	garage	182	Jun 21, 2025	Dec 20, 2025	FALSE	(use water when fertilizing plants)	Jun 21, 2025
+chore_031	flush / descale tankless water heater	Dan	plumbing	365	May 25, 2025	May 25, 2026	FALSE	every 12 months (make sure to also clean out filter screen on cold water inlet and use compressed air to clean out dust inside the panel) https://www.youtube.com/watch?v=8-ts7XuvS48&list=PLtuJEua3pOADA0Cvndy2Eh1SrKGkwTadz&index=2&t=11s https://www.youtube.com/watch?v=rgpb5tmB68A https://www.rinnai.us/residential/flushing-my-rinnai-tankless-water-heater https://youtu.be/woKVYtf2Ihg?t=757	May 25, 2025
+chore_096	vacuum	Kim	all rooms	30	Aug 3, 2025	Sep 2, 2025	FALSE	weekly?	May 19, 2025
+chore_097	steam mop & wash pads	Kim	all rooms	30	Aug 3, 2025	Sep 2, 2025	FALSE	biweekly?	May 19, 2025
+chore_111	clean mirrors	Katie	bathroom	30	May 18, 2025	Jun 17, 2025	FALSE		May 18, 2025
+chore_112	clean inside & outside of sliding doors	Katie	outside	30	May 18, 2025	Jun 17, 2025	TRUE		May 18, 2025
+chore_088	check if car seat needs adjusting	Dan	outside	90	May 18, 2025	Aug 16, 2025	FALSE		May 18, 2025
+chore_089	clean dishwasher	Katie	kitchen	90	Aug 6, 2025	Nov 4, 2025	FALSE	Pour distilled white vinegar into a dishwasher-safe cup (I usually use a two-cup Pyrex measuring cup), and place the cup upright on an empty dishwasher’s top rack. Run a full cycle, using the hot-water setting. Next, deodorize the machine by sprinkling a cup of baking soda on the bottom of the tub and running the dishwasher on a half-cycle with hot water. Afterward, leave your dishwasher open for a few hours to air it out.	May 18, 2025
+chore_053	clean out dryer vent	Dan	laundry	182	May 18, 2025	Nov 16, 2025	FALSE	https://www.artofmanliness.com/skills/how-to/how-to-clean-out-your-dryer-vent/	May 18, 2025
+chore_104	clean kitchen sink	Kim	kitchen	30	May 14, 2025	Jun 13, 2025	TRUE		May 14, 2025
+chore_084	check exterior stem wall for termite activity	Dan	outside	90	Aug 6, 2025	Nov 4, 2025	FALSE	(check when applying pest control)	May 7, 2025
+chore_085	pest control (also check for termites)	Dan	outside	90	Aug 6, 2025	Nov 4, 2025	FALSE		May 7, 2025
+chore_086	car wash new RAV4	Katie	garage	90	May 7, 2025	Aug 5, 2025	FALSE		May 7, 2025
+chore_083	clean water softener resin	Dan	plumbing	90	Aug 6, 2025	Nov 4, 2025	FALSE	add res care (1 cup) resin cleaner to brine well of water softener (tube within tank) then run a manual regen cycle	May 1, 2025
+chore_051	adjust landscape rainbird water timer once temps over 100? (May, Nov)	Dan	outside	182	May 1, 2025	Oct 30, 2025	FALSE	spring / fall: front every 2 days 30 min, back every 3 days 30 min -- summer over 105: front and back everyday 30 min -- winter 40 min every 4 days?? https://www.snwa.com/landscapes/how-and-when-to-water/drip-watering-tips.html https://www.phoenix.gov/waterservicessite/Documents/Landscape%20Watering%20Guidelines.pdf	May 1, 2025
+chore_052	prune plants	Dan	outside	182	May 1, 2025	Oct 30, 2025	FALSE		May 1, 2025
+chore_049	vacuum / dust ceiling fans	Dan	hvac	182	Apr 30, 2025	Oct 29, 2025	FALSE	do when reversing motor	Apr 30, 2025
+chore_050	reverse ceiling fan direction in winter / spring	Dan	hvac	182	Apr 30, 2025	Oct 29, 2025	FALSE	also dust fan blades	Apr 30, 2025
+chore_081	clean grill interior	Dan	outside	90	Apr 23, 2025	Jul 22, 2025	FALSE		Apr 23, 2025
+chore_106	clean grill counter	Dan	outside	30	Apr 16, 2025	May 16, 2025	TRUE		Apr 16, 2025
+chore_048	prune ficus	Dan	outside	182	Apr 16, 2025	Oct 15, 2025	FALSE		Apr 16, 2025
+chore_029	vacuum or air canister smoke detectors annually	Dan	all rooms	365	Apr 16, 2025	Apr 16, 2026	FALSE		Apr 16, 2025
+chore_030	seal wood on playground	Dan	outside	365	Apr 16, 2025	Apr 16, 2026	FALSE	done on 3/1/24	Apr 16, 2025
+chore_047	prune olive trees if needed	Dan	outside	182	Apr 2, 2025	Oct 1, 2025	FALSE		Apr 2, 2025
+chore_028	a/c maintenance appointment in spring	Dan	hvac	365	Apr 2, 2025	Apr 2, 2026	FALSE	done on 5/17/23, 8/5/22	Apr 2, 2025
+chore_046	clean refrigerator condenser coils	Dan	kitchen	182	Feb 19, 2025	Aug 20, 2025	FALSE	slide the fridge out of the wall, open up the back panel, vacuum up all the dust (actually LG doesn't want you opening up the back panel?) https://www.maughansterappliancerepair.com/blog/clean-lg-french-door-refrigerator-coils/	Feb 19, 2025
+chore_078	fertilize hibiscus	Dan	outside	90	Feb 17, 2025	May 18, 2025	FALSE		Feb 17, 2025
+chore_045	fertilize all non-hibiscus plants	Dan	outside	182	Feb 17, 2025	Aug 18, 2025	FALSE	backyard last done 3/1/24, frontyard 3/3/24 https://www.chandleraz.gov/sites/default/files/Watering-By-The-Numbers.pdf	Feb 17, 2025
+chore_044	lube garage door and tighten bolts	Dan	garage	182	Aug 6, 2025	Feb 4, 2026	FALSE	spray the pins that hold the wheels (but not the wheels themselves), spray the hinges and the central coil spring at the top of the door, don't spray any of the tracks	Feb 6, 2025
+chore_043	vacuum whole house fan inside powder room	Dan	bathroom	182	Jan 26, 2025	Jul 27, 2025	TRUE		Jan 26, 2025
+chore_027	sharpen all knives	Dan	kitchen	365	Jan 26, 2025	Jan 26, 2026	FALSE		Jan 26, 2025
+chore_026	vacuum out whole house fan vent from outside of house by service door	Dan	hvac	365	Jan 22, 2025	Jan 22, 2026	FALSE		Jan 22, 2025
+chore_024	seal granite in bathrooms	Dan	counters	365	Jan 10, 2025	Jan 10, 2026	FALSE		Jan 10, 2025
+chore_025	replace RO post-membrane filter (carbon TCR)	Dan	plumbing	1095	Jan 10, 2025	Jan 10, 2028	FALSE	Due every 2-4 years (monitor closely for leaks after install). ~3 yrs will be 1/1/25 https://youtu.be/EvtMM9s2Fuk?si=ZIXSvO2NPRAmCFaF Depending on the diameter of the post-membrane filter that you buy you'll either be able to reuse the existing 1/4th inch tube couplings or will need to move back to the larger 3/8th junctions	Jan 10, 2025
+chore_022	clean washing machine inlets	Dan	laundry	365	Jan 8, 2025	Jan 8, 2026	FALSE	Due at least once a year. Turn off water at the washer, then use pliers to take out filter and wash the filters out	Jan 8, 2025
+chore_023	replace RO membrane	Dan	plumbing	1095	Jan 8, 2025	Jan 8, 2028	FALSE	Every 2-4 years (monitor closely for leaks after install and flush for 2-4 full tanks and/or 8-24 hrs). ~3 yrs will be Jan 2028 https://youtu.be/EvtMM9s2Fuk?si=ZIXSvO2NPRAmCFaF https://www.youtube.com/watch?v=LZNQQ20TFv8 https://www.youtube.com/watch?v=NaUZU0gBEQM Either need to keep buying Pentair GRO-50EN one-piece membranes or would need to buy a membrane housing in order to move to using cheaper APEC membranes	Jan 8, 2025
+chore_020	replace RO pre-membrane filters	Dan	plumbing	365	Jan 5, 2025	Jan 5, 2026	FALSE	Due every year. Simply unscrew, rinse with dish soap, and then put in new filter and replace https://youtu.be/EvtMM9s2Fuk?si=ZIXSvO2NPRAmCFaF	Jan 5, 2025
+chore_019	seal granite in kitchen	Dan	counters	365	Jan 3, 2025	Jan 3, 2026	FALSE		Jan 3, 2025
+chore_072	tighten screws on playground	Dan	outside	90	Dec 27, 2024	Mar 27, 2025	FALSE		Dec 27, 2024
+chore_017	tighten screws on bar stools	Dan	kitchen	365	Dec 27, 2024	Dec 27, 2025	FALSE		Dec 27, 2024
+chore_018	tighten screws on dining room chairs	Dan	kitchen	365	Dec 27, 2024	Dec 27, 2025	FALSE		Dec 27, 2024
+chore_042	clean and lube slider tracks	Dan	outside	365	Dec 4, 2024	Dec 4, 2025	FALSE		Dec 4, 2024
+chore_070	sweep / wipe up epoxy in garage	Kim	garage	90	Dec 1, 2024	Mar 1, 2025	FALSE		Dec 1, 2024
+chore_071	car wash old RAV4	Katie	garage	90	Dec 1, 2024	Mar 1, 2025	FALSE		Dec 1, 2024
+chore_016	heater maintenance appointment in fall	Dan	hvac	365	Nov 26, 2024	Nov 26, 2025	FALSE	scheduled for 11/22/23	Nov 26, 2024
+chore_103	clean garbage disposal	Kim	kitchen	30	Nov 1, 2024	Dec 1, 2024	FALSE	To clean your disposal, drop in a cutup lemon, a couple of tablespoons of salt and a few ice cubes. The lemon deodorizes, and the ice and salt clean away residue. You should do this about once a month or, if there is a strong odor emanating from your disposal, more frequently.	Nov 1, 2024
+chore_039	clean inside refrigerator / freezer	Kim	kitchen	182	Nov 1, 2024	May 2, 2025	TRUE	Remove everything from your refrigerator quarterly so you can wipe down the inside. This is a healthy habit, too, because it will allow you to more easily check for expired food. Toss anything past its prime. Wipe and deodorize shelves with a solution of warm water and baking soda (1 tablespoon baking soda mixed with 1 quart warm water). If you can, pull the refrigerator away from the wall and vacuum dust and dirt that has collected.	Nov 1, 2024
+chore_015	self-clean ovens when cool enough	Kim	kitchen	365	Nov 1, 2024	Nov 1, 2025	FALSE	done on 12/6/24	Nov 1, 2024
+chore_014	shampoo carpets and rugs	Kim	all rooms	365	Oct 16, 2024	Oct 16, 2025	FALSE	do when temps are high to dry easier	Oct 16, 2024
+chore_069	clean guest shower	Kim	bathroom	90	Oct 2, 2024	Dec 31, 2024	FALSE		Oct 2, 2024
+chore_013	wipe / polish cabinets	Kim	all rooms	365	Oct 2, 2024	Oct 2, 2025	FALSE		Oct 2, 2024
+chore_068	polish faucets in bathroom sinks	Kim	bathroom	90	Aug 21, 2024	Nov 19, 2024	TRUE		Aug 21, 2024
+chore_038	dust shutters	Kim	all rooms	182	Aug 10, 2024	Feb 8, 2025	FALSE		Aug 10, 2024
+chore_012	wash outside of windows	Dan + Kim	outside	365	Jul 17, 2024	Jul 17, 2025	FALSE		Jul 17, 2024
+chore_037	prune red push pistache trees in front yard	Dan	outside	182	May 1, 2024	Oct 30, 2024	FALSE	if needed	May 1, 2024
+chore_011	caulk shower, countertop, windows	Dan	all rooms	365	Apr 28, 2024	Apr 28, 2025	FALSE	if problem only -- last inspected and determined unnecessary on 4/28/2024	Apr 28, 2024
+chore_010	patch cracks in stucco	Dan	outside	365	Apr 6, 2024	Apr 6, 2025	FALSE		Apr 6, 2024
+chore_065	clean toaster	Kim	kitchen	90	Apr 3, 2024	Jul 2, 2024	TRUE		Apr 3, 2024
+chore_066	clean Katie's shower / tub	Kim	bathroom	90	Apr 3, 2024	Jul 2, 2024	FALSE		Apr 3, 2024
+chore_067	clean master shower	Kim	bathroom	90	Apr 3, 2024	Jul 2, 2024	FALSE		Apr 3, 2024
+chore_036	seal travertine on grill	Dan	outside	182	Mar 20, 2024	Sep 18, 2024	TRUE		Mar 20, 2024
+chore_108	dust furniture	Kim	all rooms	30	Mar 17, 2024	Apr 16, 2024	FALSE		Mar 17, 2024
+chore_105	polish grill metal exteriors	Dan	outside	30	Feb 1, 2024	Mar 2, 2024	FALSE		Feb 1, 2024
+chore_064	vacuum deck	Katie	outside	90	Feb 1, 2024	May 1, 2024	FALSE		Feb 1, 2024
+chore_098	clean inside / outside of microwave	Kim	kitchen	30	Jan 11, 2024	Feb 10, 2024	TRUE	Fill a microwave-safe cup or bowl with about one cup of water. (Again, I use a Pyrex measuring cup.) Add several slices of lemon or several tablespoons of distilled white vinegar. Place the cup in the microwave and turn the microwave on high for about three minutes or until the water is very hot and the window is covered in steam. Open the door and wipe down the interior with a clean cloth. I do this about once a month, but I suggest doing it more frequently if you regularly heat up soup, melt butter or warm anything uncovered that has the potential to splatter.	Jan 11, 2024
+chore_063	clean outside of oven	Kim	kitchen	90	Jan 11, 2024	Apr 10, 2024	TRUE		Jan 11, 2024
+chore_021	change which oven you primarily use	Dan	kitchen	730	Jan 7, 2024	Jan 6, 2026	FALSE	Every ~2 yrs	Jan 7, 2024
+chore_033	wash comforter	Kim	bedrooms	182	Sep 1, 2023	Mar 1, 2024	FALSE	wait until warmer in case need to line dry. machine wash on cold, gentle cycle, tumble dry low	Sep 1, 2023
+chore_034	wash pillows	Kim	bedrooms	182	Sep 1, 2023	Mar 1, 2024	FALSE	wait until warmer in case need to line dry. spot clean with mild soap and water	Sep 1, 2023
+chore_035	wash mattress cover	Kim	bedrooms	182	Sep 1, 2023	Mar 1, 2024	FALSE	wait until warmer in case need to line dry. tumble dry low	Sep 1, 2023
+chore_062	clean master tub and polish faucet	Kim	bathroom	90	Aug 16, 2023	Nov 14, 2023	FALSE		Aug 16, 2023
+chore_009	get tires rotated on Old RAV4	Dan	garage	365	Feb 1, 2023	Feb 1, 2024	FALSE		Feb 1, 2023
+chore_059	Vacuum RAV4 interior, clean windows	Kim	garage	90	Dec 27, 2022	Mar 27, 2023	TRUE		Dec 27, 2022
+chore_060	polish appliances	Kim	kitchen	90	Dec 27, 2022	Mar 27, 2023	TRUE	(hood vent*, oven, fridge, microwave, stove, dishwasher*, kitchen faucet*)	Dec 27, 2022
+chore_008	inspect roof for broken tile and debris	Dan	outside	365	Dec 20, 2022	Dec 20, 2023	FALSE	less than annual... maybe not until we sell	Dec 20, 2022
+chore_007	clean grout	Kim	floors	365	Feb 1, 2022	Feb 1, 2023	FALSE		Feb 1, 2022
+chore_005	add sand to turf	Dan	outside	365	Jan 1, 2022	Jan 1, 2023	FALSE	every 1-2 yrs	Jan 1, 2022
+chore_006	reapply paver sand	Dan	outside	365	Jan 1, 2022	Jan 1, 2023	FALSE	if 3/8” below top	Jan 1, 2022
+chore_061	clean baseboards	Kim	all rooms	90	Dec 1, 2021	Mar 1, 2022	FALSE		Dec 1, 2021
+chore_001	clean out water softener brine tank	Dan	plumbing	365	Dec 1, 2021	Dec 1, 2022	FALSE		Dec 1, 2021
+chore_002	clean inside of windows	Dan	all rooms	365	Dec 1, 2021	Dec 1, 2022	FALSE		Dec 1, 2021
+chore_003	clean outside walls of house	Dan	outside	365	Dec 1, 2021	Dec 1, 2022	FALSE	wait until warmer (May?)	Dec 1, 2021
+chore_004	seal grout	Dan	floors	365	Dec 1, 2021	Dec 1, 2022	FALSE		Dec 1, 2021
+chore_032	replace smoke detectors	Dan	all rooms	2555	Dec 1, 2021	Nov 29, 2028	FALSE	every 7-10 yrs	Dec 1, 2021
