@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date, timedelta
 from sqlalchemy import case
+import click
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -179,7 +180,8 @@ from datetime import datetime
 
 # --- DB Initialization and Reset Commands ---
 @app.cli.command('load-chores')
-def load_chores_command(filepath='chores.csv'):
+@click.argument('filepath', default='chores.csv')
+def load_chores_command(filepath):
     """Loads chores from a CSV file."""
     with app.app_context():
         # Ensure 'Dan + Kim' user exists
