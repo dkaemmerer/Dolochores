@@ -2,16 +2,18 @@
     <li class="collection-header"><h4>Chores</h4></li>
     {% for chore in chores %}
     <li class="collection-item avatar" data-chore-id="{{ chore.id }}">
+        {% if chore.is_priority %}
+            <i class="material-icons circle yellow darken-2">star</i>
+        {% else %}
+            <i class="material-icons circle grey lighten-1">star_border</i>
+        {% endif %}
+
         <div class="chore-row-bg">
-            <div class="swipe-icon swipe-left-icon"><i class="material-icons">star</i></div>
             <div class="swipe-icon swipe-right-icon"><i class="material-icons">check</i></div>
+            <div class="swipe-icon swipe-left-icon"><i class="material-icons">star</i></div>
         </div>
-        <div class="chore-row-fg modal-trigger" style="cursor: pointer;" href="#chore-detail-modal" onclick="openChoreDetail(event)">
-            {% if chore.is_priority %}
-                <i class="material-icons circle yellow darken-2">star</i>
-            {% else %}
-                <i class="material-icons circle grey lighten-1">star_border</i>
-            {% endif %}
+
+        <div class="chore-row-fg modal-trigger" style="cursor: pointer;" href="#chore-detail-modal">
             <span class="title">{{ chore.title }}</span>
             <p>{{ chore.assignee.name }} <br>
                <span class="grey-text">{{ chore.status }} - Due: {{ chore.next_due.strftime('%b %d') if chore.next_due else 'N/A' }}</span>

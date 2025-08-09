@@ -1,7 +1,4 @@
-async function openChoreDetail(event) {
-    const choreRow = event.currentTarget.closest('.chore-row');
-    const choreId = choreRow.dataset.choreId;
-
+async function loadChoreDetails(choreId) {
     try {
         const response = await fetch(`/api/chores/${choreId}`);
         if (!response.ok) {
@@ -26,13 +23,10 @@ async function openChoreDetail(event) {
         const deleteBtn = document.getElementById('chore-detail-delete-btn');
         deleteBtn.dataset.choreId = choreId;
 
-        // Open modal
-        const modalElement = document.getElementById('chore-detail-modal');
-        const instance = M.Modal.getInstance(modalElement);
-        instance.open();
     } catch (err) {
-        console.error('Error opening chore detail:', err);
-        alert('Failed to load chore details. Please try again.');
+        console.error('Error loading chore details:', err);
+        // You might want to show an error message in the modal itself
+        document.getElementById('chore-detail-content').innerHTML = '<p>Could not load chore details. Please try again.</p>';
     }
 }
 

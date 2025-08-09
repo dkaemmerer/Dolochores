@@ -154,8 +154,21 @@
             M.Dropdown.init(dropdowns, {});
 
             // Initialize modals
-            var modals = document.querySelectorAll('.modal');
-            M.Modal.init(modals, {});
+            var addModal = document.getElementById('add-chore-modal');
+            M.Modal.init(addModal, {});
+
+            var detailModal = document.getElementById('chore-detail-modal');
+            M.Modal.init(detailModal, {
+                onOpenStart: function(modal, trigger) {
+                    const choreItem = trigger.closest('.collection-item');
+                    if (choreItem) {
+                        const choreId = choreItem.dataset.choreId;
+                        if (choreId) {
+                            loadChoreDetails(choreId);
+                        }
+                    }
+                }
+            });
 
             // Initialize select lists
             var selects = document.querySelectorAll('select');
