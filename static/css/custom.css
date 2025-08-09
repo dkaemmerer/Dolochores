@@ -54,3 +54,7 @@ main {
 .swipe-left-icon {
     padding-right: 25px;
 }
+
+.swipe-icon .material-icons {
+    font-size: 36px;
+}
