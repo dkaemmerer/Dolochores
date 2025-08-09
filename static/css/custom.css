@@ -1,0 +1,56 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+    padding-top: 20px;
+}
+
+.collection-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.chore-row-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.chore-row-fg {
+    position: relative;
+    z-index: 1;
+    background-color: white;
+    touch-action: pan-y;
+}
+
+.chore-row-fg.swiping {
+    transition: none;
+}
+
+.chore-row-fg.snap-back {
+    transition: transform 0.3s ease-out;
+}
+
+.swipe-icon {
+    opacity: 0;
+    transition: opacity 0.2s;
+    padding: 0 20px;
+}
+
+.swipe-right-icon {
+    padding-left: 25px;
+}
+
+.swipe-left-icon {
+    padding-right: 25px;
+}
