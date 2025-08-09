@@ -1,12 +1,26 @@
 import os
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import joinedload
 from datetime import date, timedelta
 from sqlalchemy import case
 import click
 
+import logging
+from logging.handlers import RotatingFileHandler
+
 # Initialize Flask app
 app = Flask(__name__)
+
+# Configure logging
+file_handler = RotatingFileHandler('flask.log', maxBytes=10240, backupCount=10)
+file_handler.setFormatter(logging.Formatter(
+    '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+))
+file_handler.setLevel(logging.INFO)
+app.logger.addHandler(file_handler)
+app.logger.setLevel(logging.INFO)
+app.logger.info('DoloChores application startup')
 
 # Configure database
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -113,15 +127,30 @@ def search():
 @app.route('/my-chores/<username>')
 def my_chores(username):
     user = User.query.filter_by(name=username).first_or_404()
-    chores = sorted(user.chores, key=lambda c: c.next_due)
+    # Eagerly load assignee to prevent N+1 query issues
+    chores_query = Chore.query.options(joinedload(Chore.assignee)).filter_by(user_id=user.id)
+    # Sort chores by next_due, handling None values to prevent errors
+    chores = sorted(chores_query.all(), key=lambda c: c.next_due if c.next_due else date.max)
     return render_template('my_chores.html', chores=chores, username=username, title=f"{username}'s Chores")
 
 @app.route('/priorities')
 def priorities():
-    priority_chores = Chore.query.filter_by(is_priority=True).all()
-    # Sort in Python using the 'next_due' property, handling potential None values
-    chores = sorted(priority_chores, key=lambda c: c.next_due if c.next_due else date.max)
-    return render_template('priorities.html', chores=chores, title="Priority Chores")
+    app.logger.info("Accessing /priorities route")
+    try:
+        # Eagerly load assignee to prevent N+1 query issues
+        priority_chores_query = Chore.query.options(joinedload(Chore.assignee)).filter_by(is_priority=True)
+        priority_chores = priority_chores_query.all()
+        app.logger.info(f"Found {len(priority_chores)} priority chores.")
+
+        # Sort in Python using the 'next_due' property, handling potential None values
+        chores = sorted(priority_chores, key=lambda c: c.next_due if c.next_due else date.max)
+        app.logger.info("Successfully sorted chores.")
+
+        return render_template('priorities.html', chores=chores, title="Priority Chores")
+    except Exception as e:
+        app.logger.error(f"An error occurred in /priorities: {e}", exc_info=True)
+        # Reraise the exception to let Flask handle it and return a 500
+        raise
 
 # --- API Routes ---
 
@@ -221,6 +250,8 @@ from collections import defaultdict
 
 @app.route('/api/email-chores', methods=['POST'])
 def email_chores():
+    if not app.config.get('MAIL_USERNAME') or not app.config.get('MAIL_PASSWORD'):
+        return jsonify({'message': 'Email server is not configured. Please set MAIL_USERNAME and MAIL_PASSWORD environment variables.'}), 500
     try:
         chores = Chore.query.all()
 

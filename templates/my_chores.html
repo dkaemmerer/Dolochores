@@ -3,6 +3,6 @@
 {% block content %}
 <section>
     <h2>{{ title }}</h2>
-    {% include '_chores_list.html' with context no_chores_message='No chores found for ' ~ username ~ '.' %}
+    {% include '_chores_list.html' with no_chores_message='No chores found for ' ~ username ~ '.' %}
 </section>
 {% endblock %}
