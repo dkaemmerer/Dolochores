@@ -1,12 +1,3 @@
-// Modal toggling function
-function toggleModal(event) {
-    event.preventDefault();
-    const modal = document.getElementById(event.currentTarget.dataset.target);
-    if (modal) {
-        modal.open ? modal.close() : modal.showModal();
-    }
-}
-
 async function openChoreDetail(event) {
     const choreRow = event.currentTarget.closest('.chore-row');
     const choreId = choreRow.dataset.choreId;
@@ -36,7 +27,9 @@ async function openChoreDetail(event) {
         deleteBtn.dataset.choreId = choreId;
 
         // Open modal
-        toggleModal({ preventDefault: () => {}, currentTarget: { dataset: { target: 'chore-detail-modal' } } });
+        const modalElement = document.getElementById('chore-detail-modal');
+        const instance = M.Modal.getInstance(modalElement);
+        instance.open();
     } catch (err) {
         console.error('Error opening chore detail:', err);
         alert('Failed to load chore details. Please try again.');
@@ -73,87 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Swipe Actions for Chore Rows ---
-    document.querySelectorAll('.chore-row').forEach(row => {
-        const fg = row.querySelector('.chore-row-fg');
-        const bg = row.querySelector('.chore-row-bg');
-        const rightIcon = bg.querySelector('.swipe-right-icon');
-        const leftIcon = bg.querySelector('.swipe-left-icon');
-
-        let touchstartX = 0;
-        let touchmoveX = 0;
-        let deltaX = 0;
-        let isSwiping = false;
-        const swipeThreshold = 80;
-
-        row.addEventListener('touchstart', e => {
-            // Don't swipe if clicking on a button/link inside
-            if (e.target.closest('a, button')) return;
-            touchstartX = e.changedTouches[0].screenX;
-            isSwiping = true;
-            fg.classList.add('swiping');
-            // Also prevent the detail view from opening
-            row.style.pointerEvents = 'none';
-        }, { passive: true });
-
-        row.addEventListener('touchmove', e => {
-            if (!isSwiping) return;
-            touchmoveX = e.changedTouches[0].screenX;
-            deltaX = touchmoveX - touchstartX;
-
-            fg.style.transform = `translateX(${deltaX}px)`;
-
-            // Reveal icons and change background color
-            if (deltaX > 0) { // Swiping right
-                bg.style.backgroundColor = 'var(--pico-color-green-550)';
-                rightIcon.style.opacity = Math.min(deltaX / swipeThreshold, 1);
-                leftIcon.style.opacity = 0;
-            } else { // Swiping left
-                bg.style.backgroundColor = 'var(--pico-color-amber-550)';
-                leftIcon.style.opacity = Math.min(Math.abs(deltaX) / swipeThreshold, 1);
-                rightIcon.style.opacity = 0;
-            }
-
-        }, { passive: true });
-
-        row.addEventListener('touchend', e => {
-            if (!isSwiping) return;
-            isSwiping = false;
-            fg.classList.remove('swiping');
-
-            if (Math.abs(deltaX) > swipeThreshold) {
-                handleSwipeAction(row, deltaX);
-            } else {
-                // Snap back
-                fg.classList.add('snap-back');
-                fg.style.transform = '';
-                bg.style.backgroundColor = '';
-                rightIcon.style.opacity = 0;
-                leftIcon.style.opacity = 0;
-                // Allow clicks again
-                row.style.pointerEvents = 'auto';
-            }
-
-            deltaX = 0; // Reset delta
-
-            setTimeout(() => {
-                fg.classList.remove('snap-back');
-            }, 300);
-        });
-    });
-
-    function handleSwipeAction(row, deltaX) {
-        const choreId = row.dataset.choreId;
-        const swipeThreshold = 80;
-
-        if (Math.abs(deltaX) > swipeThreshold) {
-            if (deltaX > 0) {
-                handleAction(`/api/chores/${choreId}/complete`, 'POST', 'Chore marked as complete.');
-            } else {
-                handleAction(`/api/chores/${choreId}/toggle-priority`, 'POST', 'Priority toggled.');
-            }
-        }
-    }
 
     const deleteBtn = document.getElementById('chore-detail-delete-btn');
     if (deleteBtn) {
