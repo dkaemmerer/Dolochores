@@ -1,31 +1,36 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="container">
-    <h1>{{ title }}</h1>
-
-    <div class="chores-list">
-        {% for chore in chores %}
-        <div class="chore-card" data-chore-id="{{ chore.id }}">
+<section>
+    <h2>{{ title }}</h2>
+    {% for chore in chores %}
+    <article class="chore-card" data-chore-id="{{ chore.id }}">
+        <header>
             <h3 class="chore-title {{ chore.status | lower | replace(' ', '-') }}">
-                {{ chore.title }}
                 {% if chore.is_priority %}
-                <span class="priority-icon">⭐</span>
+                <span title="High Priority">⭐</span>
                 {% endif %}
+                {{ chore.title }}
             </h3>
-            <p><strong>Category:</strong> {{ chore.category }}</p>
-            <p><strong>Status:</strong> {{ chore.status }}</p>
-            <p><strong>Next Due:</strong> {{ chore.next_due.strftime('%Y-%m-%d') if chore.next_due else 'N/A' }}</p>
-            <p><strong>Notes:</strong> {{ chore.notes }}</p>
-            <div class="chore-actions">
-                <button class="complete-btn">Mark Complete</button>
-                <button class="priority-btn">Toggle Priority</button>
-                <button class="delete-btn">Delete</button>
+        </header>
+        <p>
+            <strong>Category:</strong> {{ chore.category | default('N/A') }} |
+            <strong>Status:</strong> <span class="status-{{ chore.status | lower | replace(' ', '-') }}">{{ chore.status }}</span> |
+            <strong>Next Due:</strong> {{ chore.next_due.strftime('%Y-%m-%d') if chore.next_due else 'N/A' }}
+        </p>
+        {% if chore.notes %}
+        <blockquote>{{ chore.notes }}</blockquote>
+        {% endif %}
+        <footer>
+            <div class="grid">
+                <button class="contrast complete-btn">Mark Complete</button>
+                <button class="secondary priority-btn">Toggle Priority</button>
+                <button class="secondary outline delete-btn">Delete</button>
             </div>
-        </div>
-        {% else %}
-        <p>No chores found for {{ username }}.</p>
-        {% endfor %}
-    </div>
-</div>
+        </footer>
+    </article>
+    {% else %}
+    <p>No chores found for {{ username }}.</p>
+    {% endfor %}
+</section>
 {% endblock %}

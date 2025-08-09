@@ -183,7 +183,8 @@ from datetime import datetime
 # --- DB Initialization and Reset Commands ---
 @app.cli.command('load-chores')
 @click.argument('filepath', default='chores.csv')
-def load_chores_command(filepath):
+@click.option('--limit', default=-1, help='Number of rows to import, -1 for all.')
+def load_chores_command(filepath, limit):
     """Loads chores from a CSV file."""
     with app.app_context():
         # Ensure 'Dan + Kim' user exists
@@ -195,9 +196,11 @@ def load_chores_command(filepath):
 
         with open(filepath, newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile, delimiter='\t')
-            for row in reader:
+            for i, row in enumerate(reader):
+                if limit != -1 and i >= limit:
+                    break
                 try:
-                    # Look up user_id, default to first user if not found
+                    # Look up user_id
                     assignee_name = row['assignee']
                     user_id = user_map.get(assignee_name)
                     if not user_id:

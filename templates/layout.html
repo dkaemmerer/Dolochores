@@ -1,22 +1,35 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DoloChores</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>DoloChores</title>
   </head>
   <body>
-    <nav>
-      <a href="{{ url_for('all_chores') }}">All Chores</a> |
-      <a href="{{ url_for('priorities') }}">Priorities</a> |
-      <a href="{{ url_for('my_chores', username='Dan') }}">Dan's Chores</a> |
-      <a href="{{ url_for('my_chores', username='Kim') }}">Kim's Chores</a> |
-      <a href="{{ url_for('my_chores', username='Katie') }}">Katie's Chores</a>
-    </nav>
-    <hr>
-    <main>
-      {% block content %}{% endblock %}
+    <main class="container">
+        <nav>
+            <ul>
+                <li><strong>DoloChores</strong></li>
+            </ul>
+            <ul>
+                <li><a href="{{ url_for('all_chores') }}">All Chores</a></li>
+                <li><a href="{{ url_for('priorities') }}">Priorities</a></li>
+                <li>
+                    <details class="dropdown">
+                        <summary>My Chores</summary>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('my_chores', username='Dan') }}">Dan's Chores</a></li>
+                            <li><a href="{{ url_for('my_chores', username='Kim') }}">Kim's Chores</a></li>
+                            <li><a href="{{ url_for('my_chores', username='Katie') }}">Katie's Chores</a></li>
+                        </ul>
+                    </details>
+                </li>
+            </ul>
+        </nav>
+        <hr>
+        {% block content %}{% endblock %}
     </main>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   </body>
