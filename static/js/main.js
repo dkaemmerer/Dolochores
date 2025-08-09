@@ -75,44 +75,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Swipe Actions for Chore Rows ---
     document.querySelectorAll('.chore-row').forEach(row => {
+        const fg = row.querySelector('.chore-row-fg');
+        const bg = row.querySelector('.chore-row-bg');
+        const rightIcon = bg.querySelector('.swipe-right-icon');
+        const leftIcon = bg.querySelector('.swipe-left-icon');
+
         let touchstartX = 0;
-        let touchendX = 0;
+        let touchmoveX = 0;
+        let deltaX = 0;
         let isSwiping = false;
+        const swipeThreshold = 80;
 
         row.addEventListener('touchstart', e => {
+            // Don't swipe if clicking on a button/link inside
+            if (e.target.closest('a, button')) return;
             touchstartX = e.changedTouches[0].screenX;
             isSwiping = true;
+            fg.classList.add('swiping');
+            // Also prevent the detail view from opening
+            row.style.pointerEvents = 'none';
+        }, { passive: true });
+
+        row.addEventListener('touchmove', e => {
+            if (!isSwiping) return;
+            touchmoveX = e.changedTouches[0].screenX;
+            deltaX = touchmoveX - touchstartX;
+
+            fg.style.transform = `translateX(${deltaX}px)`;
+
+            // Reveal icons and change background color
+            if (deltaX > 0) { // Swiping right
+                bg.style.backgroundColor = 'var(--pico-color-green-550)';
+                rightIcon.style.opacity = Math.min(deltaX / swipeThreshold, 1);
+                leftIcon.style.opacity = 0;
+            } else { // Swiping left
+                bg.style.backgroundColor = 'var(--pico-color-amber-550)';
+                leftIcon.style.opacity = Math.min(Math.abs(deltaX) / swipeThreshold, 1);
+                rightIcon.style.opacity = 0;
+            }
+
         }, { passive: true });
 
         row.addEventListener('touchend', e => {
             if (!isSwiping) return;
             isSwiping = false;
-            touchendX = e.changedTouches[0].screenX;
-            handleSwipe(row, touchstartX, touchendX);
+            fg.classList.remove('swiping');
+
+            if (Math.abs(deltaX) > swipeThreshold) {
+                handleSwipeAction(row, deltaX);
+            } else {
+                // Snap back
+                fg.classList.add('snap-back');
+                fg.style.transform = '';
+                bg.style.backgroundColor = '';
+                rightIcon.style.opacity = 0;
+                leftIcon.style.opacity = 0;
+                // Allow clicks again
+                row.style.pointerEvents = 'auto';
+            }
+
+            deltaX = 0; // Reset delta
+
+            setTimeout(() => {
+                fg.classList.remove('snap-back');
+            }, 300);
         });
     });
 
-    function handleSwipe(row, startX, endX) {
+    function handleSwipeAction(row, deltaX) {
         const choreId = row.dataset.choreId;
-        const swipeThreshold = 50; // pixels
-        const deltaX = endX - startX;
+        const swipeThreshold = 80;
 
         if (Math.abs(deltaX) > swipeThreshold) {
-            // Prevent the click event from firing
-            row.style.pointerEvents = 'none';
-
             if (deltaX > 0) {
-                // Swipe Right: Mark Complete
                 handleAction(`/api/chores/${choreId}/complete`, 'POST', 'Chore marked as complete.');
             } else {
-                // Swipe Left: Toggle Priority
                 handleAction(`/api/chores/${choreId}/toggle-priority`, 'POST', 'Priority toggled.');
             }
-
-            // Re-enable clicks after a short delay
-            setTimeout(() => {
-                row.style.pointerEvents = 'auto';
-            }, 300);
         }
     }
 

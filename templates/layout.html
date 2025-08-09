@@ -26,10 +26,11 @@
                         </ul>
                     </details>
                 </li>
+                <li><a href="{{ url_for('search') }}" role="button" class="contrast outline" data-tooltip="Search Chores">&#128269;</a></li>
                 <li>
-                    <details role="list" dir="rtl">
-                        <summary aria-haspopup="listbox" role="button" class="contrast outline">&#8942;</summary>
-                        <ul role="listbox">
+                    <details class="dropdown">
+                        <summary role="button" class="contrast outline">&#8942;</summary>
+                        <ul class="dropdown-menu">
                             <li><a href="#" data-target="add-chore-modal" onclick="toggleModal(event)">Add Chore</a></li>
                             <li><a href="#" id="email-chores-btn">Email Chores List</a></li>
                         </ul>

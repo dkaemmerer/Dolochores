@@ -3,24 +3,7 @@
 {% block content %}
 
 <section>
-    <form method="get" action="{{ url_for('all_chores') }}">
-        <div class="grid">
-            <input type="search" id="search" name="q" placeholder="Search chores..." value="{{ request.args.get('q', '') }}">
-            <button type="submit" class="secondary">Search</button>
-        </div>
-    </form>
     <h2>All Chores</h2>
-    <div class="chores-list">
-    {% for chore in chores %}
-    <div class="chore-row" data-chore-id="{{ chore.id }}" data-target="chore-detail-modal" onclick="openChoreDetail(event)">
-        <span class="chore-priority">{% if chore.is_priority %}⭐{% endif %}</span>
-        <span class="chore-title">{{ chore.title }}</span>
-        <span class="chore-assignee">{{ chore.assignee.name }}</span>
-        <span class="chore-status status-{{ chore.status | lower | replace(' ', '-') }}">{{ chore.status }}</span>
-    </div>
-    {% else %}
-    <p>No chores found.</p>
-    {% endfor %}
-    </div>
+    {% include '_chores_list.html' %}
 </section>
 {% endblock %}

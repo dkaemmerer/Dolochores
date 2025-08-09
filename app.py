@@ -84,24 +84,31 @@ def inject_users():
 
 @app.route('/')
 def all_chores():
-    search_query = request.args.get('q')
-
-    query = Chore.query.join(User) # Join with User to search by assignee name
-    if search_query:
-        search_term = f'%{search_query}%'
-        query = query.filter(
-            Chore.title.ilike(search_term) |
-            Chore.notes.ilike(search_term) |
-            User.name.ilike(search_term)
-        )
-
-    chores = query.all()
+    chores = Chore.query.all()
 
     # Custom sort key for status
     status_map = {"Overdue": 1, "Due Soon": 2, "Completed Recently": 3}
     chores.sort(key=lambda c: (status_map.get(c.status, 4), not c.is_priority, c.next_due, -c.frequency))
 
     return render_template('index.html', chores=chores, title="All Chores")
+
+@app.route('/search')
+def search():
+    search_query = request.args.get('q')
+    chores = []
+    if search_query:
+        search_term = f'%{search_query}%'
+        query = Chore.query.join(User).filter(
+            Chore.title.ilike(search_term) |
+            Chore.notes.ilike(search_term) |
+            User.name.ilike(search_term)
+        )
+        chores = query.all()
+        # Sort results just like in all_chores
+        status_map = {"Overdue": 1, "Due Soon": 2, "Completed Recently": 3}
+        chores.sort(key=lambda c: (status_map.get(c.status, 4), not c.is_priority, c.next_due, -c.frequency))
+
+    return render_template('search.html', chores=chores, title="Search Chores")
 
 @app.route('/my-chores/<username>')
 def my_chores(username):
@@ -256,6 +263,7 @@ def email_chores():
         # Send email
         msg = Message(
             subject="Today's Chores",
+            sender=app.config.get('MAIL_USERNAME') or 'noreply@dolochores.com',
             recipients=["dolohome@gmail.com"],
             body=email_body
         )

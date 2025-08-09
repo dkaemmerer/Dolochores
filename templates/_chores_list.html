@@ -1,0 +1,18 @@
+<div class="chores-list">
+{% for chore in chores %}
+<div class="chore-row" data-chore-id="{{ chore.id }}">
+    <div class="chore-row-bg">
+        <div class="swipe-icon swipe-right-icon">✔️</div>
+        <div class="swipe-icon swipe-left-icon">⭐</div>
+    </div>
+    <div class="chore-row-fg" data-target="chore-detail-modal" onclick="openChoreDetail(event)">
+        <span class="chore-priority">{% if chore.is_priority %}⭐{% endif %}</span>
+        <span class="chore-title">{{ chore.title }}</span>
+        <span class="chore-assignee">{{ chore.assignee.name }}</span>
+        <span class="chore-status status-{{ chore.status | lower | replace(' ', '-') }}">{{ chore.status }}</span>
+    </div>
+</div>
+{% else %}
+<p>{{ no_chores_message | default('No chores found.') }}</p>
+{% endfor %}
+</div>

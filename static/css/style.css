@@ -28,19 +28,58 @@ article h3 span[title="High Priority"] {
     font-size: 1.25rem; /* A bit larger for visibility */
 }
 
-/* Chore row styles */
+/* Swipe Action Styles */
 .chore-row {
+    position: relative;
+    overflow: hidden;
+    user-select: none; /* Prevent text selection during swipe */
+    margin-bottom: var(--pico-spacing);
+}
+
+.chore-row-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--pico-spacing);
+    background-color: var(--pico-muted-background-color);
+    z-index: 0;
+    transition: background-color 0.3s ease;
+}
+
+.swipe-icon {
+    font-size: 1.5rem;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.chore-row-fg {
+    position: relative;
+    z-index: 1;
+    background-color: var(--pico-form-element-background-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: var(--pico-spacing);
     border: 1px solid var(--pico-muted-border-color);
     border-radius: var(--pico-border-radius);
-    margin-bottom: var(--pico-spacing);
     cursor: pointer;
 }
 
-.chore-row:hover {
+.chore-row-fg.swiping {
+    transition: none; /* Disable transition during active swipe */
+}
+
+.chore-row-fg.snap-back {
+    transition: transform 0.3s ease; /* Re-enable for snap-back */
+}
+
+.chore-row-fg:hover {
     background-color: var(--pico-muted-background-color);
 }
 
@@ -57,4 +96,9 @@ article h3 span[title="High Priority"] {
 
 .chore-priority {
     font-size: 1.25rem;
+}
+
+/* Custom Nav Styles */
+nav ul {
+    align-items: center;
 }

@@ -3,33 +3,6 @@
 {% block content %}
 <section>
     <h2>{{ title }}</h2>
-    {% for chore in chores %}
-    <article class="chore-card" data-chore-id="{{ chore.id }}">
-        <header>
-            <h3 class="chore-title {{ chore.status | lower | replace(' ', '-') }}">
-                <span title="High Priority">⭐</span>
-                {{ chore.title }}
-            </h3>
-        </header>
-        <p>
-            <strong>Assignee:</strong> {{ chore.assignee.name }} |
-            <strong>Category:</strong> {{ chore.category | default('N/A') }} |
-            <strong>Status:</strong> <span class="status-{{ chore.status | lower | replace(' ', '-') }}">{{ chore.status }}</span> |
-            <strong>Next Due:</strong> {{ chore.next_due.strftime('%Y-%m-%d') if chore.next_due else 'N/A' }}
-        </p>
-        {% if chore.notes %}
-        <blockquote>{{ chore.notes }}</blockquote>
-        {% endif %}
-        <footer>
-            <div class="grid">
-                <button class="contrast complete-btn">Mark Complete</button>
-                <button class="secondary priority-btn">Toggle Priority</button>
-                <button class="secondary outline delete-btn">Delete</button>
-            </div>
-        </footer>
-    </article>
-    {% else %}
-    <p>No priority chores found.</p>
-    {% endfor %}
+    {% include '_chores_list.html' with context no_chores_message='No priority chores found.' %}
 </section>
 {% endblock %}

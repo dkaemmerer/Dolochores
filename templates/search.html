@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section>
+    <h2>Search Chores</h2>
+    <form method="get" action="{{ url_for('search') }}">
+        <div class="grid">
+            <input type="search" id="search" name="q" placeholder="Search by title, assignee, or notes..." value="{{ request.args.get('q', '') }}" autofocus>
+            <button type="submit">Search</button>
+        </div>
+    </form>
+
+    {% if chores is defined %}
+        <hr>
+        <h3>Search Results</h3>
+        {% include '_chores_list.html' %}
+    {% endif %}
+</section>
+{% endblock %}
