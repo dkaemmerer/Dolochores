@@ -12,13 +12,12 @@ main {
 }
 
 footer {
-    position: sticky;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 100;
     background-color: var(--md-sys-color-surface);
-    line-height: 0; /* Remove extra space that can cause a gap */
 }
 
 a {
