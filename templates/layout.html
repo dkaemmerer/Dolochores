@@ -5,182 +5,168 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Materialize CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Material Web Components -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@material/web/": "https://esm.run/@material/web/"
+        }
+      }
+    </script>
+    <script type="module">
+      import '@material/web/all.js';
+      import {styles as typescaleStyles} from '@material/web/typography/md-typescale-styles.js';
+      document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
+    </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     <title>DoloChores</title>
+    <style>
+      /* Global theme overrides */
+      :root {
+        --md-sys-color-primary: #006A6A;
+        /* Add other theme tokens here if needed */
+      }
+      body {
+        font-family: 'Roboto', sans-serif;
+      }
+    </style>
   </head>
   <body>
     <header>
-        <nav>
-            <div class="nav-wrapper">
-                <a href="{{ url_for('all_chores') }}" class="brand-logo" style="padding-left: 15px;">DoloChores</a>
-                <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-                <ul id="nav-mobile" class="right hide-on-med-and-down">
-                    <li><a href="{{ url_for('all_chores') }}">All Chores</a></li>
-                    <li><a href="{{ url_for('priorities') }}">Priorities</a></li>
-                    <li><a class="dropdown-trigger" href="#!" data-target="my-chores-dropdown">My Chores<i class="material-icons right">arrow_drop_down</i></a></li>
-                    <li><a href="{{ url_for('search') }}"><i class="material-icons">search</i></a></li>
-                    <li><a class="dropdown-trigger" href="#!" data-target="more-actions-dropdown"><i class="material-icons">more_vert</i></a></li>
-                </ul>
+        <md-top-app-bar>
+            <md-icon-button href="{{ url_for('all_chores') }}" slot="navigation-icon" aria-label="Home">
+                <span class="material-icons">home</span>
+            </md-icon-button>
+            <div slot="title">DoloChores</div>
+            <div slot="action-items" style="display: flex; align-items: center;">
+                <a href="{{ url_for('all_chores') }}" class="desktop-nav">
+                    <md-text-button>All Chores</md-text-button>
+                </a>
+                <a href="{{ url_for('priorities') }}" class="desktop-nav">
+                    <md-text-button>Priorities</md-text-button>
+                </a>
+
+                <div style="position: relative;" class="desktop-nav">
+                    <md-text-button id="my-chores-button">My Chores <span class="material-icons">arrow_drop_down</span></md-text-button>
+                    <md-menu id="my-chores-menu" anchor="my-chores-button">
+                        {% for user in users %}
+                        <md-menu-item href="{{ url_for('my_chores', username=user.name) }}">
+                            <div slot="headline">{{ user.name }}'s Chores</div>
+                        </md-menu-item>
+                        {% endfor %}
+                    </md-menu>
+                </div>
+
+                <a href="{{ url_for('search') }}">
+                    <md-icon-button aria-label="Search">
+                        <span class="material-icons">search</span>
+                    </md-icon-button>
+                </a>
+
+                <div style="position: relative;">
+                    <md-icon-button id="more-actions-button" aria-label="More actions">
+                        <span class="material-icons">more_vert</span>
+                    </md-icon-button>
+                    <md-menu id="more-actions-menu" anchor="more-actions-button">
+                        <md-menu-item id="add-chore-menu-item" class="desktop-nav">
+                            <div slot="headline">Add Chore</div>
+                        </md-menu-item>
+                        <md-menu-item id="email-chores-menu-item-desktop">
+                            <div slot="headline">Email Chores List</div>
+                        </md-menu-item>
+                         <md-sub-menu class="mobile-nav">
+                            <md-menu-item slot="item">
+                                <div slot="headline">Navigation</div>
+                            </md-menu-item>
+                            <md-menu slot="menu">
+                                <md-menu-item href="{{ url_for('all_chores') }}"><div slot="headline">All Chores</div></md-menu-item>
+                                <md-menu-item href="{{ url_for('priorities') }}"><div slot="headline">Priorities</div></md-menu-item>
+                            </md-menu>
+                        </md-sub-menu>
+                        <md-sub-menu class="mobile-nav">
+                            <md-menu-item slot="item">
+                                <div slot="headline">My Chores</div>
+                            </md-menu-item>
+                            <md-menu slot="menu">
+                                {% for user in users %}
+                                <md-menu-item href="{{ url_for('my_chores', username=user.name) }}">
+                                    <div slot="headline">{{ user.name }}'s Chores</div>
+                                </md-menu-item>
+                                {% endfor %}
+                            </md-menu>
+                        </md-sub-menu>
+                        <md-menu-item id="add-chore-menu-item-mobile" class="mobile-nav">
+                            <div slot="headline">Add Chore</div>
+                        </md-menu-item>
+                         <md-menu-item id="email-chores-menu-item-mobile">
+                            <div slot="headline">Email Chores List</div>
+                        </md-menu-item>
+                    </md-menu>
+                </div>
             </div>
-        </nav>
-
-        <!-- Sidenav Structure -->
-        <ul id="mobile-nav" class="sidenav">
-            <li><a href="{{ url_for('all_chores') }}">All Chores</a></li>
-            <li><a href="{{ url_for('priorities') }}">Priorities</a></li>
-            <li class="divider"></li>
-            <li><a class="subheader">My Chores</a></li>
-            <li><a href="{{ url_for('my_chores', username='Dan') }}">Dan's Chores</a></li>
-            <li><a href="{{ url_for('my_chores', username='Kim') }}">Kim's Chores</a></li>
-            <li><a href="{{ url_for('my_chores', username='Katie') }}">Katie's Chores</a></li>
-            <li class="divider"></li>
-            <li><a href="{{ url_for('search') }}">Search</a></li>
-            <li><a href="#" data-target="add-chore-modal" class="modal-trigger">Add Chore</a></li>
-            <li><a href="#" id="email-chores-btn-mobile">Email Chores List</a></li>
-        </ul>
-
-        <!-- Dropdown Structures for Desktop -->
-        <ul id="my-chores-dropdown" class="dropdown-content">
-            <li><a href="{{ url_for('my_chores', username='Dan') }}">Dan's Chores</a></li>
-            <li><a href="{{ url_for('my_chores', username='Kim') }}">Kim's Chores</a></li>
-            <li><a href="{{ url_for('my_chores', username='Katie') }}">Katie's Chores</a></li>
-        </ul>
-        <ul id="more-actions-dropdown" class="dropdown-content">
-            <li><a href="#" data-target="add-chore-modal" class="modal-trigger">Add Chore</a></li>
-            <li><a href="#" id="email-chores-btn">Email Chores List</a></li>
-        </ul>
+        </md-top-app-bar>
     </header>
 
     <main class="container">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Add Chore Modal -->
-    <div id="add-chore-modal" class="modal">
-        <div class="modal-content">
-            <h4>Add a New Chore</h4>
-            <form id="add-chore-form">
-                <div class="row">
-                    <div class="input-field col s6">
-                        <input type="text" id="title" name="title" required>
-                        <label for="title">Title</label>
-                    </div>
-                    <div class="input-field col s6">
-                        <select id="user_id" name="user_id" required>
-                            {% for user in users %}
-                            <option value="{{ user.id }}">{{ user.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <label>Assignee</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col s4">
-                        <select id="category" name="category">
-                            <option value="all rooms">all rooms</option>
-                            <option value="bathroom">bathroom</option>
-                            <option value="bedrooms">bedrooms</option>
-                            <option value="counters">counters</option>
-                            <option value="floors">floors</option>
-                            <option value="garage">garage</option>
-                            <option value="hvac">hvac</option>
-                            <option value="kitchen">kitchen</option>
-                            <option value="laundry">laundry</option>
-                            <option value="outside">outside</option>
-                            <option value="plumbing">plumbing</option>
-                            <option value="riley">riley</option>
-                        </select>
-                        <label>Category</label>
-                    </div>
-                    <div class="input-field col s4">
-                        <select id="frequency" name="frequency" required>
-                            <option value="14">14</option>
-                            <option value="30">30</option>
-                            <option value="90">90</option>
-                            <option value="182">182</option>
-                            <option value="365">365</option>
-                            <option value="730">730</option>
-                            <option value="1095">1095</option>
-                            <option value="2555">2555</option>
-                        </select>
-                        <label>Frequency (days)</label>
-                    </div>
-                    <div class="input-field col s4">
-                        <input type="date" id="last_completed" name="last_completed" class="datepicker" required>
-                        <label for="last_completed">Last Completed</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col s12">
-                        <textarea id="notes" name="notes" class="materialize-textarea"></textarea>
-                        <label for="notes">Notes</label>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
-                    <button type="submit" class="btn waves-effect waves-light">Add Chore</button>
-                </div>
-            </form>
+    <md-dialog id="add-chore-dialog">
+        <div slot="headline">Add a New Chore</div>
+        <form id="add-chore-form" slot="content" style="display: flex; flex-direction: column; gap: 16px;">
+            <md-outlined-text-field label="Title" name="title" required></md-outlined-text-field>
+            <md-outlined-select label="Assignee" name="user_id" required>
+                {% for user in users %}
+                <md-select-option value="{{ user.id }}">
+                    <div slot="headline">{{ user.name }}</div>
+                </md-select-option>
+                {% endfor %}
+            </md-outlined-select>
+            <md-outlined-select label="Category" name="category">
+                <md-select-option value="all rooms"><div slot="headline">all rooms</div></md-select-option>
+                <md-select-option value="bathroom"><div slot="headline">bathroom</div></md-select-option>
+                <md-select-option value="bedrooms"><div slot="headline">bedrooms</div></md-select-option>
+                <md-select-option value="counters"><div slot="headline">counters</div></md-select-option>
+                <md-select-option value="floors"><div slot="headline">floors</div></md-select-option>
+                <md-select-option value="garage"><div slot="headline">garage</div></md-select-option>
+                <md-select-option value="hvac"><div slot="headline">hvac</div></md-select-option>
+                <md-select-option value="kitchen"><div slot="headline">kitchen</div></md-select-option>
+                <md-select-option value="laundry"><div slot="headline">laundry</div></md-select-option>
+                <md-select-option value="outside"><div slot="headline">outside</div></md-select-option>
+                <md-select-option value="plumbing"><div slot="headline">plumbing</div></md-select-option>
+                <md-select-option value="riley"><div slot="headline">riley</div></md-select-option>
+            </md-outlined-select>
+            <md-outlined-select label="Frequency (days)" name="frequency" required>
+                <md-select-option value="14"><div slot="headline">14</div></md-select-option>
+                <md-select-option value="30"><div slot="headline">30</div></md-select-option>
+                <md-select-option value="90"><div slot="headline">90</div></md-select-option>
+                <md-select-option value="182"><div slot="headline">182</div></md-select-option>
+                <md-select-option value="365"><div slot="headline">365</div></md-select-option>
+                <md-select-option value="730"><div slot="headline">730</div></md-select-option>
+                <md-select-option value="1095"><div slot="headline">1095</div></md-select-option>
+                <md-select-option value="2555"><div slot="headline">2555</div></md-select-option>
+            </md-outlined-select>
+            <md-outlined-text-field label="Last Completed" name="last_completed" type="date" required></md-outlined-text-field>
+            <md-outlined-text-field label="Notes" name="notes" type="textarea"></md-outlined-text-field>
+        </form>
+        <div slot="actions">
+            <md-text-button id="add-chore-cancel-btn">Cancel</md-text-button>
+            <md-filled-button type="submit" form="add-chore-form">Add Chore</md-filled-button>
         </div>
-    </div>
+    </md-dialog>
 
-    <!-- Chore Detail Modal -->
-    <div id="chore-detail-modal" class="modal">
-      <div class="modal-content">
-        <h4 id="chore-detail-title">Chore Details</h4>
-        <div id="chore-detail-content">
-            <!-- Chore details will be populated here by JS -->
-        </div>
+    <md-dialog id="chore-detail-dialog">
+      <div slot="headline" id="chore-detail-title">Chore Details</div>
+      <div slot="content" id="chore-detail-content">
+        <!-- Chore details will be populated here by JS -->
       </div>
-      <div class="modal-footer">
-        <a href="#!" id="chore-detail-delete-btn" class="waves-effect waves-red btn-flat">Delete</a>
-        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+      <div slot="actions">
+        <md-text-button id="chore-detail-delete-btn" style="--md-text-button-label-text-color: var(--md-sys-color-error);">Delete</md-text-button>
+        <md-text-button id="chore-detail-close-btn">Close</md-text-button>
       </div>
-    </div>
+    </md-dialog>
 
-    <!-- Materialize JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- App-specific JS -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Sidenav
-            var sidenavs = document.querySelectorAll('.sidenav');
-            M.Sidenav.init(sidenavs, {});
-
-            // Initialize dropdowns
-            var dropdowns = document.querySelectorAll('.dropdown-trigger');
-            M.Dropdown.init(dropdowns, {});
-
-            // Initialize modals
-            var addModal = document.getElementById('add-chore-modal');
-            M.Modal.init(addModal, {});
-
-            var detailModal = document.getElementById('chore-detail-modal');
-            M.Modal.init(detailModal, {
-                onOpenStart: function(modal, trigger) {
-                    const choreItem = trigger.closest('.collection-item');
-                    if (choreItem) {
-                        const choreId = choreItem.dataset.choreId;
-                        if (choreId) {
-                            loadChoreDetails(choreId);
-                        }
-                    }
-                }
-            });
-
-            // Initialize select lists
-            var selects = document.querySelectorAll('select');
-            M.FormSelect.init(selects, {});
-
-            // Initialize date pickers
-            var datepickers = document.querySelectorAll('.datepicker');
-            M.Datepicker.init(datepickers, {
-                format: 'yyyy-mm-dd',
-                autoClose: true
-            });
-        });
-    </script>
   </body>
 </html>

@@ -2,19 +2,62 @@ body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
+    background-color: var(--md-sys-color-surface-container-lowest);
 }
 
 main {
     flex: 1 0 auto;
-    padding-top: 20px;
+    padding: 20px;
 }
 
-.collection-item {
+/* Responsive navigation */
+@media (min-width: 601px) {
+    .mobile-nav {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .desktop-nav {
+        display: none;
+    }
+}
+
+a {
+    text-decoration: none;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--md-sys-color-on-primary-container);
+}
+
+.status-overdue {
+    background-color: var(--md-sys-color-error-container);
+    color: var(--md-sys-color-on-error-container);
+}
+
+.status-due-soon {
+    background-color: var(--md-sys-color-tertiary-container);
+    color: var(--md-sys-color-on-tertiary-container);
+}
+
+.status-completed-recently {
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+}
+
+/* Swipe functionality styles */
+.swipe-container {
     position: relative;
     overflow: hidden;
+    background-color: var(--md-sys-color-surface-container-low);
 }
 
-.chore-row-bg {
+.swipe-background {
     position: absolute;
     top: 0;
     left: 0;
@@ -23,38 +66,44 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: white;
+    color: var(--md-sys-color-on-primary);
 }
 
-.chore-row-fg {
-    position: relative;
-    z-index: 1;
-    background-color: white;
-    touch-action: pan-y;
+.swipe-action {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 24px;
+    opacity: 0;
+    transition: opacity 150ms ease-in-out;
+    height: 100%;
 }
 
-.chore-row-fg.swiping {
+.action-complete {
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.action-priority {
+    background-color: var(--md-sys-color-tertiary);
+    color: var(--md-sys-color-on-tertiary);
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.chore-item.swiping {
     transition: none;
 }
 
-.chore-row-fg.snap-back {
-    transition: transform 0.3s ease-out;
+.chore-item.snap-back {
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.swipe-icon {
-    opacity: 0;
-    transition: opacity 0.2s;
-    padding: 0 20px;
-}
-
-.swipe-right-icon {
-    padding-left: 25px;
-}
-
-.swipe-left-icon {
-    padding-right: 25px;
-}
-
-.swipe-icon .material-icons {
-    font-size: 36px;
+.chore-item {
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    background-color: var(--md-sys-color-surface-container-lowest);
 }

@@ -3,25 +3,27 @@
 {% block content %}
 <section>
     <h2>Search Chores</h2>
-    <form method="get" action="{{ url_for('search') }}" class="section">
-        <div class="row">
-            <div class="input-field col s9">
-                <i class="material-icons prefix">search</i>
-                <input type="search" id="search" name="q" value="{{ request.args.get('q', '') }}" class="validate" autofocus>
-                <label for="search">Search by title, assignee, or notes...</label>
-            </div>
-            <div class="input-field col s3">
-                <button class="btn waves-effect waves-light" type="submit">Search
-                    <i class="material-icons right">send</i>
-                </button>
-            </div>
-        </div>
+    <form method="get" action="{{ url_for('search') }}" style="display: flex; align-items: flex-start; gap: 16px; margin-top: 20px;">
+        <md-outlined-text-field
+            label="Search by title, assignee, or notes..."
+            name="q"
+            value="{{ request.args.get('q', '') }}"
+            style="flex-grow: 1;"
+            autofocus
+        >
+            <md-icon slot="leading-icon">search</md-icon>
+        </md-outlined-text-field>
+
+        <md-filled-button type="submit">
+            Search
+            <md-icon slot="icon-trailing">send</md-icon>
+        </md-filled-button>
     </form>
 
     {% if chores is defined %}
-        <div class="divider"></div>
-        <div class="section">
+        <div style="margin-top: 32px;">
             <h3>Search Results</h3>
+            <md-divider></md-divider>
             {% include '_chores_list.html' %}
         </div>
     {% endif %}
