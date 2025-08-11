@@ -88,42 +88,86 @@ async function loadChoreDetails(choreId) {
     }
 }
 
-async function handleAction(url, method, element) {
+async function handleSwipeAction(action, choreId, element) {
+    const url = `/api/chores/${choreId}/${action}`;
+
     try {
-        const response = await fetch(url, { method });
-        if (response.ok) {
-            if (element) {
-                const container = element.closest('.swipe-container');
-                container.style.transition = 'opacity 300ms ease-out, height 300ms ease-out';
-                container.style.opacity = '0';
-                container.style.height = '0';
-                container.addEventListener('transitionend', () => {
-                    container.remove();
-                });
-            }
-        } else {
-            const error = await response.json();
-            alert(`Error: ${error.message}`);
-            if (element) element.style.transform = '';
+        const response = await fetch(url, { method: 'POST' });
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'An error occurred.');
         }
+
+        const choreRow = element.closest('.chore-list-row');
+
+        if (action === 'complete') {
+            // Animate out, then update and move to bottom
+            choreRow.style.transition = 'opacity 300ms ease-out';
+            choreRow.style.opacity = '0';
+            choreRow.addEventListener('transitionend', () => {
+                const list = choreRow.parentElement;
+                updateChoreRow(choreRow, data);
+                list.appendChild(choreRow); // Move to bottom
+                choreRow.style.opacity = '1';
+            }, { once: true });
+        } else if (action === 'toggle-priority') {
+            updateChoreRow(choreRow, data);
+            element.style.transform = ''; // Snap back
+        }
+
     } catch (err) {
-        console.error(`Failed to perform action:`, err);
-        alert('An error occurred. Please try again.');
-        if (element) element.style.transform = '';
+        console.error(`Failed to perform action '${action}':`, err);
+        alert(err.message);
+        element.style.transform = ''; // Snap back on failure
     }
 }
 
-function setupSwipeActions() {
-    document.querySelectorAll('.chore-item').forEach(item => {
-        const container = item.closest('.swipe-container');
-        if (!container) return;
+function updateChoreRow(choreRow, choreData) {
+    // Update supporting text
+    const supportText = choreRow.querySelector('[slot="supporting-text"]');
+    if (supportText) {
+        const nextDue = choreData.next_due ? new Date(choreData.next_due).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A';
+        supportText.textContent = `${choreData.assignee} • Due: ${nextDue}`;
+    }
 
-        const bg = container.querySelector('.swipe-background');
+    // Update status badge
+    const statusBadge = choreRow.querySelector('.status-badge');
+    if (statusBadge) {
+        statusBadge.className = `status-badge status-${choreData.status.toLowerCase().replace(' ', '-')}`;
+        statusBadge.textContent = choreData.status;
+    }
+
+    // Update star icon
+    const iconSlot = choreRow.querySelector('[slot="start"]');
+    if (choreData.is_priority) {
+        if (!iconSlot) {
+            const newIcon = document.createElement('md-icon');
+            newIcon.slot = 'start';
+            newIcon.textContent = 'star';
+            choreRow.querySelector('.chore-item').prepend(newIcon);
+        } else {
+            iconSlot.textContent = 'star';
+        }
+    } else {
+        if (iconSlot) {
+            iconSlot.remove();
+        }
+    }
+}
+
+
+function setupSwipeActions() {
+    document.querySelectorAll('.chore-list-row').forEach(row => {
+        const item = row.querySelector('.chore-item');
+        if (!item) return;
+
+        const bg = row.querySelector('.swipe-background');
         const completeAction = bg.querySelector('.action-complete');
         const priorityAction = bg.querySelector('.action-priority');
 
         let touchstartX = 0, touchstartY = 0, deltaX = 0, deltaY = 0, isSwiping = false;
-        const tapThreshold = 5;
+        const tapThreshold = 10; // Increased threshold for taps
         const swipeThreshold = 80;
 
         item.addEventListener('touchstart', e => {
@@ -165,12 +209,13 @@ function setupSwipeActions() {
             isSwiping = false;
             item.classList.remove('swiping');
 
+            const choreId = row.dataset.choreId;
+
             if (Math.abs(deltaX) > swipeThreshold) {
-                const choreId = item.dataset.choreId;
-                const url = deltaX > 0 ? `/api/chores/${choreId}/complete` : `/api/chores/${choreId}/toggle-priority`;
-                handleAction(url, 'POST', item);
+                const action = deltaX > 0 ? 'complete' : 'toggle-priority';
+                handleSwipeAction(action, choreId, item);
             } else if (Math.abs(deltaX) < tapThreshold && Math.abs(deltaY) < tapThreshold) {
-                loadChoreDetails(item.dataset.choreId);
+                loadChoreDetails(choreId);
                 item.style.transform = '';
             } else {
                 item.style.transform = '';
@@ -189,9 +234,24 @@ function setupSwipeActions() {
     });
 }
 
+function setupSearch() {
+    const searchForm = document.querySelector('.search-form');
+    if (searchForm) {
+        const searchField = searchForm.querySelector('md-outlined-text-field');
+        if (searchField) {
+            searchField.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    searchForm.submit();
+                }
+            });
+        }
+    }
+}
+
 // --- Main Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
     setupTabs();
+    setupSearch();
 
     setupDialog('add-chore-dialog',
         ['add-chore-button'],
@@ -235,8 +295,21 @@ document.addEventListener('DOMContentLoaded', () => {
         deleteBtn.addEventListener('click', async (e) => {
             const choreId = e.currentTarget.dataset.choreId;
             if (choreId && confirm('Are you sure you want to delete this chore?')) {
-                const choreItem = document.querySelector(`.chore-item[data-chore-id='${choreId}']`);
-                await handleAction(`/api/chores/${choreId}`, 'DELETE', choreItem);
+                const choreRow = document.querySelector(`.chore-list-row[data-chore-id='${choreId}']`);
+                try {
+                    const response = await fetch(`/api/chores/${choreId}`, { method: 'DELETE' });
+                    if (response.ok) {
+                        choreRow.style.transition = 'opacity 300ms ease-out';
+                        choreRow.style.opacity = '0';
+                        choreRow.addEventListener('transitionend', () => choreRow.remove(), { once: true });
+                    } else {
+                        const error = await response.json();
+                        alert(`Error: ${error.message}`);
+                    }
+                } catch (err) {
+                    console.error('Failed to delete chore:', err);
+                    alert('An error occurred.');
+                }
             }
         });
     }

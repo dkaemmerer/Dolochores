@@ -116,11 +116,13 @@ md-tabs {
     flex-grow: 1;
     display: flex;
     justify-content: center;
+    min-width: 0; /* Allow the search bar to shrink */
 }
 
 .search-form {
     width: 100%;
-    max-width: 400px;
+    max-width: 500px; /* Adjust max-width as needed */
+    display: flex;
 }
 
 .search-form md-outlined-text-field {

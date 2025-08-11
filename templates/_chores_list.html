@@ -1,35 +1,36 @@
 <md-list>
     {% for chore in chores %}
-    <div class="swipe-container">
-        <div class="swipe-background">
-            <div class="swipe-action action-complete">
-                <md-icon>check</md-icon>
-                <span>Complete</span>
+    <div class="chore-list-row" data-chore-id="{{ chore.id }}">
+        <div class="swipe-container">
+            <div class="swipe-background">
+                <div class="swipe-action action-complete">
+                    <md-icon>check</md-icon>
+                    <span>Complete</span>
+                </div>
+                <div class="swipe-action action-priority">
+                    <md-icon>star</md-icon>
+                    <span>Priority</span>
+                </div>
             </div>
-            <div class="swipe-action action-priority">
-                <md-icon>star</md-icon>
-                <span>Priority</span>
-            </div>
+            <md-list-item
+                class="chore-item"
+            >
+                <div slot="headline">{{ chore.title }}</div>
+                <div slot="supporting-text">{{ chore.assignee.name }} &bull; Due: {{ chore.next_due.strftime('%b %d') if chore.next_due else 'N/A' }}</div>
+
+                {% if chore.is_priority %}
+                <md-icon slot="start">star</md-icon>
+                {% endif %}
+
+                <div slot="end" style="display: flex; align-items: center; gap: 8px;">
+                    <span class="status-badge status-{{ chore.status | lower | replace(' ', '-') }}">
+                        {{ chore.status }}
+                    </span>
+                </div>
+            </md-list-item>
         </div>
-        <md-list-item
-            class="chore-item"
-            data-chore-id="{{ chore.id }}"
-        >
-            <div slot="headline">{{ chore.title }}</div>
-            <div slot="supporting-text">{{ chore.assignee.name }} &bull; Due: {{ chore.next_due.strftime('%b %d') if chore.next_due else 'N/A' }}</div>
-
-            {% if chore.is_priority %}
-            <md-icon slot="start">star</md-icon>
-            {% endif %}
-
-            <div slot="end" style="display: flex; align-items: center; gap: 8px;">
-                <span class="status-badge status-{{ chore.status | lower | replace(' ', '-') }}">
-                    {{ chore.status }}
-                </span>
-            </div>
-        </md-list-item>
+        <md-divider></md-divider>
     </div>
-    <md-divider></md-divider>
     {% else %}
     <md-list-item>
         <div slot="headline">{{ no_chores_message | default('No chores found.') }}</div>

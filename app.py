@@ -200,7 +200,19 @@ def complete_chore(chore_id):
     chore.last_completed = date.today()
     chore.is_priority = False
     db.session.commit()
-    return jsonify({'message': 'Chore marked as complete'})
+    return jsonify({
+        'id': chore.id,
+        'title': chore.title,
+        'user_id': chore.user_id,
+        'assignee': chore.assignee.name,
+        'category': chore.category,
+        'frequency': chore.frequency,
+        'last_completed': chore.last_completed.isoformat() if chore.last_completed else None,
+        'is_priority': chore.is_priority,
+        'notes': chore.notes,
+        'next_due': chore.next_due.isoformat() if chore.next_due else None,
+        'status': chore.status
+    })
 
 @app.route('/api/chores/<int:chore_id>/toggle-priority', methods=['POST'])
 def toggle_priority(chore_id):
