@@ -2,7 +2,6 @@
 
 {% block content %}
 <section>
-    <h2 class="page-header">{{ title }}</h2>
     {% set no_chores_message = 'No chores found for ' ~ username ~ '.' %}
     {% include '_chores_list.html' %}
 </section>

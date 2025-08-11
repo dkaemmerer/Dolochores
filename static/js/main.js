@@ -60,13 +60,17 @@ let isEditMode = false;
 
 function populateReadOnlyView(chore) {
     const contentEl = document.getElementById('chore-detail-readonly-view');
+    // Correctly parse date strings to avoid timezone issues
+    const nextDueDate = chore.next_due ? new Date(chore.next_due.replace(/-/g, '/')).toLocaleDateString() : 'N/A';
+    const lastCompletedDate = chore.last_completed ? new Date(chore.last_completed.replace(/-/g, '/')).toLocaleDateString() : 'N/A';
+
     contentEl.innerHTML = `
         <p><strong>Assignee:</strong> ${chore.assignee}</p>
         <p><strong>Category:</strong> ${chore.category || 'N/A'}</p>
         <p><strong>Status:</strong> ${chore.status}</p>
-        <p><strong>Next Due:</strong> ${chore.next_due ? new Date(chore.next_due).toLocaleDateString() : 'N/A'}</p>
+        <p><strong>Next Due:</strong> ${nextDueDate}</p>
         <p><strong>Frequency:</strong> Every ${chore.frequency} days</p>
-        <p><strong>Last Completed:</strong> ${chore.last_completed ? new Date(chore.last_completed).toLocaleDateString() : 'N/A'}</p>
+        <p><strong>Last Completed:</strong> ${lastCompletedDate}</p>
         ${chore.notes ? `<p><strong>Notes:</strong><br>${chore.notes}</p>` : ''}
     `;
 }
@@ -160,7 +164,8 @@ function updateChoreRow(choreRow, choreData) {
     const choreItem = choreRow.querySelector('.chore-item');
     const supportText = choreRow.querySelector('[slot="supporting-text"]');
     if (supportText) {
-        const nextDue = choreData.next_due ? new Date(choreData.next_due).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A';
+        // Correctly parse date string to avoid timezone issues by replacing hyphens
+        const nextDue = choreData.next_due ? new Date(choreData.next_due.replace(/-/g, '/')).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A';
         supportText.textContent = `${choreData.assignee} • Due: ${nextDue}`;
     }
 
@@ -387,6 +392,23 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (err) {
                 console.error('Failed to send email:', err);
                 alert('An error occurred while sending the email.');
+            }
+        });
+    }
+
+    const undoBtn = document.getElementById('undo-button');
+    if (undoBtn) {
+        undoBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/undo', { method: 'POST' });
+                const result = await response.json();
+                alert(result.message);
+                if (response.ok) {
+                    location.reload();
+                }
+            } catch (err) {
+                console.error('Failed to undo action:', err);
+                alert('An error occurred while undoing the action.');
             }
         });
     }
