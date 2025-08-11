@@ -107,6 +107,7 @@ async function handleSwipeAction(action, choreId, element) {
             choreRow.style.opacity = '0';
             choreRow.addEventListener('transitionend', () => {
                 const list = choreRow.parentElement;
+                element.style.transform = ''; // Reset horizontal position
                 updateChoreRow(choreRow, data);
                 list.appendChild(choreRow); // Move to bottom
                 choreRow.style.opacity = '1';

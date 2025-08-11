@@ -113,15 +113,15 @@ md-tabs {
 }
 
 .top-app-bar-title {
-    flex-grow: 1;
     display: flex;
     justify-content: center;
-    min-width: 0; /* Allow the search bar to shrink */
+    width: 100%;
+    min-width: 0;
 }
 
 .search-form {
     width: 100%;
-    max-width: 500px; /* Adjust max-width as needed */
+    max-width: 350px; /* Further reduced max-width */
     display: flex;
 }
 
@@ -132,4 +132,9 @@ md-tabs {
 .top-app-bar-actions {
     display: flex;
     align-items: center;
+}
+
+/* Make add chore dialog taller */
+#add-chore-dialog {
+    --md-dialog-container-height: 680px;
 }

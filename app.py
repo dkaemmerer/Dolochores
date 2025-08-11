@@ -219,7 +219,20 @@ def toggle_priority(chore_id):
     chore = Chore.query.get_or_404(chore_id)
     chore.is_priority = not chore.is_priority
     db.session.commit()
-    return jsonify({'is_priority': chore.is_priority})
+    # Return the full chore object so the frontend can update correctly
+    return jsonify({
+        'id': chore.id,
+        'title': chore.title,
+        'user_id': chore.user_id,
+        'assignee': chore.assignee.name,
+        'category': chore.category,
+        'frequency': chore.frequency,
+        'last_completed': chore.last_completed.isoformat() if chore.last_completed else None,
+        'is_priority': chore.is_priority,
+        'notes': chore.notes,
+        'next_due': chore.next_due.isoformat() if chore.next_due else None,
+        'status': chore.status
+    })
 
 @app.route('/api/chores/<int:chore_id>/undo', methods=['POST'])
 def undo_complete(chore_id):
