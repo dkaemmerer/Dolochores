@@ -127,22 +127,23 @@ md-tabs {
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    padding: 0 16px; /* Equal padding on both sides */
+    padding: 0 8px;
 }
 
-.top-bar-start, .top-bar-end {
-    display: flex;
-    align-items: center;
+.top-bar-start {
     flex-shrink: 0;
 }
 
 .top-bar-end {
-    /* No extra padding needed, handled by parent */
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    justify-content: flex-end;
 }
 
 .top-bar-center {
     flex-grow: 1;
-    min-width: 50px; /* Allow shrinking */
+    min-width: 50px;
     display: flex;
     justify-content: center;
 }
