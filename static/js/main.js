@@ -75,12 +75,11 @@ function populateEditForm(chore) {
     const form = document.getElementById('chore-edit-form');
     form.querySelector('[name="chore_id"]').value = chore.id;
     form.querySelector('[name="title"]').value = chore.title;
-    form.querySelector('[name="user_id"]').value = chore.user_id;
+    form.querySelector('[name="user_id"]').value = String(chore.user_id);
     form.querySelector('[name="category"]').value = chore.category;
-    form.querySelector('[name="frequency"]').value = chore.frequency;
+    form.querySelector('[name="frequency"]').value = String(chore.frequency);
     form.querySelector('[name="last_completed"]').value = chore.last_completed;
     form.querySelector('[name="notes"]').value = chore.notes;
-    form.querySelector('[name="is_priority"]').checked = chore.is_priority;
 }
 
 function setDialogMode(edit = false) {

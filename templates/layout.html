@@ -63,7 +63,7 @@
         </md-top-app-bar>
     </header>
 
-    <main class="container">
+    <main class="container scrollable-content">
         {% block content %}{% endblock %}
     </main>
 
@@ -184,7 +184,6 @@
                 </md-outlined-select>
                 <md-outlined-text-field label="Last Completed" name="last_completed" type="date" required></md-outlined-text-field>
                 <md-outlined-text-field label="Notes" name="notes" type="textarea"></md-outlined-text-field>
-                <md-checkbox name="is_priority" touch-target="wrapper">Priority</md-checkbox>
             </form>
         </div>
         <div slot="actions">
