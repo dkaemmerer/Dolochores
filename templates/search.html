@@ -3,11 +3,9 @@
 {% block content %}
 <section>
     {% if chores is defined %}
-        <h2 class="page-header">Search Results</h2>
         <md-divider></md-divider>
         {% include '_chores_list.html' %}
     {% else %}
-        <h2 class="page-header">Search Chores</h2>
         <p>Use the search bar at the top to find chores.</p>
     {% endif %}
 </section>

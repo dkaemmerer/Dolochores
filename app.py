@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import joinedload
 from datetime import date, timedelta
@@ -11,6 +11,7 @@ from logging.handlers import RotatingFileHandler
 
 # Initialize Flask app
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'a-super-secret-key-that-should-be-changed'
 
 # Configure logging
 file_handler = RotatingFileHandler('flask.log', maxBytes=10240, backupCount=10)
@@ -110,7 +111,9 @@ def all_chores():
 def search():
     search_query = request.args.get('q')
     chores = []
+    title = "Search Chores"
     if search_query:
+        title = "Search Results"
         search_term = f'%{search_query}%'
         query = Chore.query.join(User).filter(
             Chore.title.ilike(search_term) |
@@ -122,7 +125,7 @@ def search():
         status_map = {"Overdue": 1, "Due Soon": 2, "Completed Recently": 3}
         chores.sort(key=lambda c: (status_map.get(c.status, 4), not c.is_priority, c.next_due or date.max, -c.frequency))
 
-    return render_template('search.html', chores=chores, title="Search Chores")
+    return render_template('search.html', chores=chores, title=title)
 
 @app.route('/my-chores/<username>')
 def my_chores(username):
@@ -188,6 +191,13 @@ def add_chore():
         )
         db.session.add(new_chore)
         db.session.commit()
+
+        # Store info for undo
+        session['last_action'] = {
+            'action_type': 'add_chore',
+            'chore_id': new_chore.id
+        }
+
         return jsonify({'message': 'Chore created successfully'}), 201
     except (ValueError, TypeError) as e:
         return jsonify({'message': f'Invalid data: {e}'}), 400
@@ -196,6 +206,15 @@ def add_chore():
 @app.route('/api/chores/<int:chore_id>/complete', methods=['POST'])
 def complete_chore(chore_id):
     chore = Chore.query.get_or_404(chore_id)
+
+    # Store previous state for undo
+    session['last_action'] = {
+        'action_type': 'complete',
+        'chore_id': chore.id,
+        'previous_last_completed': chore.last_completed.isoformat() if chore.last_completed else None,
+        'previous_is_priority': chore.is_priority
+    }
+
     chore.previous_last_completed = chore.last_completed
     chore.last_completed = date.today()
     chore.is_priority = False
@@ -217,6 +236,14 @@ def complete_chore(chore_id):
 @app.route('/api/chores/<int:chore_id>/toggle-priority', methods=['POST'])
 def toggle_priority(chore_id):
     chore = Chore.query.get_or_404(chore_id)
+
+    # Store previous state for undo
+    session['last_action'] = {
+        'action_type': 'toggle_priority',
+        'chore_id': chore.id,
+        'previous_is_priority': chore.is_priority
+    }
+
     chore.is_priority = not chore.is_priority
     db.session.commit()
     # Return the full chore object so the frontend can update correctly
@@ -234,14 +261,48 @@ def toggle_priority(chore_id):
         'status': chore.status
     })
 
-@app.route('/api/chores/<int:chore_id>/undo', methods=['POST'])
-def undo_complete(chore_id):
+@app.route('/api/undo', methods=['POST'])
+def undo_last_action():
+    last_action = session.pop('last_action', None)
+    if not last_action:
+        return jsonify({'message': 'Nothing to undo.'}), 404
+
+    action_type = last_action.get('action_type')
+    chore_id = last_action.get('chore_id')
     chore = Chore.query.get_or_404(chore_id)
-    if chore.previous_last_completed:
-        chore.last_completed = chore.previous_last_completed
+
+    if action_type == 'complete':
+        previous_date_str = last_action.get('previous_last_completed')
+        chore.last_completed = date.fromisoformat(previous_date_str) if previous_date_str else None
+        chore.is_priority = last_action.get('previous_is_priority', chore.is_priority)
         db.session.commit()
-        return jsonify({'message': 'Undo successful'})
-    return jsonify({'message': 'No previous date to restore'}), 400
+        return jsonify({'message': 'Last completion undone.'})
+
+    elif action_type == 'toggle_priority':
+        chore.is_priority = last_action.get('previous_is_priority')
+        db.session.commit()
+        return jsonify({'message': 'Priority change undone.'})
+
+    elif action_type == 'add_chore':
+        db.session.delete(chore)
+        db.session.commit()
+        return jsonify({'message': 'Chore addition undone.'})
+
+    elif action_type == 'edit_chore':
+        prev_data = last_action.get('previous_data')
+        if prev_data:
+            chore.title = prev_data['title']
+            chore.user_id = prev_data['user_id']
+            chore.category = prev_data['category']
+            chore.frequency = prev_data['frequency']
+            last_completed_str = prev_data.get('last_completed')
+            chore.last_completed = date.fromisoformat(last_completed_str) if last_completed_str else None
+            chore.notes = prev_data['notes']
+            chore.is_priority = prev_data['is_priority']
+            db.session.commit()
+            return jsonify({'message': 'Edit undone.'})
+
+    return jsonify({'message': 'Unknown action type.'}), 400
 
 @app.route('/api/chores/<int:chore_id>', methods=['DELETE'])
 def delete_chore(chore_id):
@@ -257,12 +318,27 @@ def edit_chore(chore_id):
     if not data:
         return jsonify({'message': 'No data provided'}), 400
 
+    # Store previous state for undo
+    session['last_action'] = {
+        'action_type': 'edit_chore',
+        'chore_id': chore.id,
+        'previous_data': {
+            'title': chore.title,
+            'user_id': chore.user_id,
+            'category': chore.category,
+            'frequency': chore.frequency,
+            'last_completed': chore.last_completed.isoformat() if chore.last_completed else None,
+            'notes': chore.notes,
+            'is_priority': chore.is_priority
+        }
+    }
+
     try:
         chore.title = data.get('title', chore.title)
         chore.user_id = data.get('user_id', chore.user_id)
         chore.category = data.get('category', chore.category)
         chore.frequency = int(data.get('frequency', chore.frequency))
-        if 'last_completed' in data:
+        if 'last_completed' in data and data['last_completed']:
             chore.last_completed = date.fromisoformat(data['last_completed'])
         chore.notes = data.get('notes', chore.notes)
         chore.is_priority = data.get('is_priority', chore.is_priority)

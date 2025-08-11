@@ -1,32 +1,38 @@
-html, body {
+html {
     height: 100%;
-    overflow: hidden; /* Prevent scrolling on the body */
     margin: 0;
 }
 
 body {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto 1fr auto; /* Header, Main (stretches), Footer */
+    height: 100%;
+    margin: 0;
     background-color: var(--md-sys-color-surface-container-lowest);
 }
 
 header {
-    flex-shrink: 0; /* Prevent header from shrinking */
-    position: sticky; /* Stick to top */
-    top: 0;
+    /* position: sticky is not needed with grid layout if we don't want the whole page to scroll */
     z-index: 100;
+    /* background-color: var(--md-sys-color-surface-container-lowest); */ /* This was causing the issue */
 }
 
 main.scrollable-content {
-    flex-grow: 1; /* Allow main content to grow */
     overflow-y: auto; /* Allow only main content to scroll */
-    padding-bottom: 80px; /* Adjust padding to avoid overlap with fixed footer */
+    overscroll-behavior-y: contain; /* Prevent scroll-chaining to the body */
+    /* No padding-bottom needed as footer is not overlapping */
 }
 
 footer {
-    flex-shrink: 0; /* Prevent footer from shrinking */
     z-index: 100;
     background-color: #f0f0f0; /* A distinct light grey */
+}
+
+/* New styles for the page title container */
+.page-title-container {
+    padding: 8px 16px;
+    background-color: var(--md-sys-color-surface-container-lowest);
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
 }
 
 a {
@@ -47,21 +53,21 @@ md-tabs {
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 500;
-    color: var(--md-sys-color-on-primary-container);
+    color: white; /* Ensure all badge text is white for contrast */
 }
 
 .status-overdue {
-    background-color: #d93025; /* Red */
+    background-color: #e53935; /* New Red */
     color: white;
 }
 
 .status-due-soon {
-    background-color: #f29900; /* Amber/Yellow */
+    background-color: #ffb300; /* New Amber/Yellow */
     color: white;
 }
 
 .status-done {
-    background-color: #1e8e3e; /* Green */
+    background-color: #006a6a; /* New Teal Green */
     color: white;
 }
 
@@ -87,20 +93,20 @@ md-tabs {
     align-items: center;
     gap: 16px;
     padding: 0 24px;
-    color: var(--md-sys-color-on-primary);
+    color: white;
     opacity: 0;
     transition: opacity 150ms ease-in-out;
 }
 
 .action-complete {
     left: 0;
-    background-color: #1e8e3e; /* Green */
+    background-color: #006a6a; /* New Teal Green */
     color: white;
 }
 
 .action-priority {
     right: 0;
-    background-color: #f29900; /* Amber/Yellow */
+    background-color: #ffb300; /* New Amber/Yellow */
     color: white;
 }
 
@@ -118,7 +124,7 @@ md-tabs {
 
 /* Top App Bar styles */
 .top-app-bar {
-    --md-top-app-bar-container-color: #f0f0f0; /* A distinct light grey */
+    /* --md-top-app-bar-container-color is now handled by the .top-bar-layout background */
 }
 
 .top-bar-layout {
@@ -128,16 +134,22 @@ md-tabs {
     justify-content: space-between;
     gap: 8px;
     padding: 8px 0px;
+    background-color: #006a6a; /* Apply background color directly */
 }
 
-.top-bar-start {
+.top-bar-start, .top-bar-end {
     flex-shrink: 0;
+}
+
+/* Set icon colors in top bar to white */
+.top-bar-start md-icon-button,
+.top-bar-end md-icon-button {
+    --md-icon-button-icon-color: white;
 }
 
 .top-bar-end {
     display: flex;
     align-items: center;
-    flex-shrink: 0;
     justify-content: flex-end;
 }
 
@@ -159,6 +171,13 @@ md-tabs {
     --md-outlined-text-field-container-shape: 28px;
     --md-outlined-field-top-space: 8px;
     --md-outlined-field-bottom-space: 8px;
+    /* Style the search bar for the new background */
+    --md-outlined-field-input-text-color: white;
+    --md-sys-color-on-surface-variant: rgba(255, 255, 255, 0.8); /* Placeholder text */
+    --md-outlined-field-outline-color: rgba(255, 255, 255, 0.7);
+    --md-outlined-field-hover-outline-color: white;
+    --md-outlined-field-focus-outline-color: white;
+    --md-outlined-field-leading-icon-color: rgba(255, 255, 255, 0.8);
 }
 
 /* Make add chore dialog taller */
@@ -167,7 +186,7 @@ md-tabs {
 }
 
 .page-header {
-    padding: 0 16px;
+    margin: 0; /* Remove default margin from h2 */
 }
 
 /* Style for priority vs non-priority star icons */
@@ -177,5 +196,5 @@ md-tabs {
 
 .chore-item.priority md-icon[slot="start"] {
     opacity: 1;
-    color: var(--md-sys-color-primary);
+    color: #ffb300; /* Use priority yellow for the star */
 }

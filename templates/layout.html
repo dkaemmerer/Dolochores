@@ -52,6 +52,9 @@
                     </form>
                 </div>
                 <div class="top-bar-end">
+                    <md-icon-button id="undo-button" aria-label="Undo Last Action">
+                        <md-icon>undo</md-icon>
+                    </md-icon-button>
                     <md-icon-button id="add-chore-button" aria-label="Add Chore">
                         <md-icon>add_circle</md-icon>
                     </md-icon-button>
@@ -61,6 +64,9 @@
                 </div>
             </div>
         </md-top-app-bar>
+        <div class="page-title-container">
+            <h2 class="page-header">{{ title | default('DoloChores') }}</h2>
+        </div>
     </header>
 
     <main class="scrollable-content">
