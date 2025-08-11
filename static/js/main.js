@@ -171,7 +171,8 @@ function setupSwipeActions() {
         const tapThreshold = 10; // Increased threshold for taps
         const swipeThreshold = 80;
 
-        item.addEventListener('touchstart', e => {
+        // Attach listeners to the container row, not the md-list-item itself
+        row.addEventListener('touchstart', e => {
             if (e.target.closest('md-icon-button, a, button')) return;
 
             touchstartX = e.changedTouches[0].screenX;
@@ -181,7 +182,7 @@ function setupSwipeActions() {
             document.body.classList.add('swiping-in-progress');
         }, { passive: true });
 
-        item.addEventListener('touchmove', e => {
+        row.addEventListener('touchmove', e => {
             if (!isSwiping) return;
 
             deltaX = e.changedTouches[0].screenX - touchstartX;
@@ -205,7 +206,7 @@ function setupSwipeActions() {
             }
         }, { passive: false });
 
-        item.addEventListener('touchend', e => {
+        row.addEventListener('touchend', e => {
             if (!isSwiping) return;
             isSwiping = false;
             item.classList.remove('swiping');

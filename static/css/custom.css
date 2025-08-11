@@ -18,6 +18,7 @@ footer {
     right: 0;
     z-index: 100;
     background-color: var(--md-sys-color-surface);
+    line-height: 0; /* Remove extra space that can cause a gap */
 }
 
 a {
@@ -110,18 +111,21 @@ md-tabs {
 /* Top App Bar styles */
 .top-app-bar {
     --md-top-app-bar-container-color: var(--md-sys-color-surface);
+    position: relative; /* Needed for absolute positioning of the title */
 }
 
 .top-app-bar-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 160px); /* 100% minus width of side elements */
     display: flex;
     justify-content: center;
-    width: 100%;
-    min-width: 0;
 }
 
 .search-form {
     width: 100%;
-    max-width: 350px; /* Further reduced max-width */
+    max-width: 400px;
     display: flex;
 }
 
