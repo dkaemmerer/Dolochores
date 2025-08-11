@@ -111,31 +111,38 @@ md-tabs {
 /* Top App Bar styles */
 .top-app-bar {
     --md-top-app-bar-container-color: var(--md-sys-color-surface);
-    position: relative; /* Needed for absolute positioning of the title */
 }
 
-.top-app-bar-title {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 160px); /* 100% minus width of side elements */
+.top-bar-layout {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 8px;
+}
+
+.top-bar-start, .top-bar-end {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.top-bar-center {
+    flex-grow: 1;
+    min-width: 50px; /* Allow shrinking */
     display: flex;
     justify-content: center;
 }
 
 .search-form {
     width: 100%;
-    max-width: 400px;
+    max-width: 450px;
     display: flex;
 }
 
 .search-form md-outlined-text-field {
     width: 100%;
-}
-
-.top-app-bar-actions {
-    display: flex;
-    align-items: center;
 }
 
 /* Make add chore dialog taller */

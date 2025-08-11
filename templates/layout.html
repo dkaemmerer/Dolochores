@@ -33,28 +33,32 @@
   </head>
   <body>
     <header>
-        <md-top-app-bar class="top-app-bar">
-            <md-icon-button href="{{ url_for('all_chores') }}" slot="navigation-icon" aria-label="Home">
-                <md-icon>home</md-icon>
-            </md-icon-button>
-            <div slot="title" class="top-app-bar-title">
-                <form method="get" action="{{ url_for('search') }}" class="search-form">
-                    <md-outlined-text-field
-                        placeholder="Search..."
-                        name="q"
-                        value="{{ request.args.get('q', '') }}"
-                    >
-                        <md-icon slot="leading-icon">search</md-icon>
-                    </md-outlined-text-field>
-                </form>
-            </div>
-            <div slot="action-items" class="top-app-bar-actions">
-                <md-icon-button id="add-chore-button" aria-label="Add Chore">
-                    <md-icon>add_circle</md-icon>
-                </md-icon-button>
-                <md-icon-button id="email-button" aria-label="Email Chores">
-                    <md-icon>mail</md-icon>
-                </md-icon-button>
+        <md-top-app-bar>
+            <div class="top-bar-layout">
+                <div class="top-bar-start">
+                    <md-icon-button href="{{ url_for('all_chores') }}" aria-label="Home">
+                        <md-icon>home</md-icon>
+                    </md-icon-button>
+                </div>
+                <div class="top-bar-center">
+                    <form method="get" action="{{ url_for('search') }}" class="search-form">
+                        <md-outlined-text-field
+                            placeholder="Search..."
+                            name="q"
+                            value="{{ request.args.get('q', '') }}"
+                        >
+                            <md-icon slot="leading-icon">search</md-icon>
+                        </md-outlined-text-field>
+                    </form>
+                </div>
+                <div class="top-bar-end">
+                    <md-icon-button id="add-chore-button" aria-label="Add Chore">
+                        <md-icon>add_circle</md-icon>
+                    </md-icon-button>
+                    <md-icon-button id="email-button" aria-label="Email Chores">
+                        <md-icon>mail</md-icon>
+                    </md-icon-button>
+                </div>
             </div>
         </md-top-app-bar>
     </header>

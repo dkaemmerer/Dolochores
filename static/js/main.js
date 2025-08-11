@@ -54,8 +54,6 @@ function setupDialog(dialogId, openTriggerIds = [], closeTriggerIds = []) {
 }
 
 async function loadChoreDetails(choreId) {
-    if (document.body.classList.contains('swiping-in-progress')) return;
-
     try {
         const response = await fetch(`/api/chores/${choreId}`);
         if (!response.ok) throw new Error('Failed to fetch chore details');
@@ -102,44 +100,40 @@ async function handleSwipeAction(action, choreId, element) {
         const choreRow = element.closest('.chore-list-row');
 
         if (action === 'complete') {
-            // Animate out, then update and move to bottom
             choreRow.style.transition = 'opacity 300ms ease-out';
             choreRow.style.opacity = '0';
             choreRow.addEventListener('transitionend', () => {
                 const list = choreRow.parentElement;
-                element.style.transform = ''; // Reset horizontal position
+                element.style.transform = '';
                 updateChoreRow(choreRow, data);
-                list.appendChild(choreRow); // Move to bottom
+                list.appendChild(choreRow);
                 choreRow.style.opacity = '1';
             }, { once: true });
         } else if (action === 'toggle-priority') {
             updateChoreRow(choreRow, data);
-            element.style.transform = ''; // Snap back
+            element.style.transform = '';
         }
 
     } catch (err) {
         console.error(`Failed to perform action '${action}':`, err);
         alert(err.message);
-        element.style.transform = ''; // Snap back on failure
+        element.style.transform = '';
     }
 }
 
 function updateChoreRow(choreRow, choreData) {
-    // Update supporting text
     const supportText = choreRow.querySelector('[slot="supporting-text"]');
     if (supportText) {
         const nextDue = choreData.next_due ? new Date(choreData.next_due).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A';
         supportText.textContent = `${choreData.assignee} • Due: ${nextDue}`;
     }
 
-    // Update status badge
     const statusBadge = choreRow.querySelector('.status-badge');
     if (statusBadge) {
         statusBadge.className = `status-badge status-${choreData.status.toLowerCase().replace(' ', '-')}`;
         statusBadge.textContent = choreData.status;
     }
 
-    // Update star icon
     const iconSlot = choreRow.querySelector('[slot="start"]');
     if (choreData.is_priority) {
         if (!iconSlot) {
@@ -157,81 +151,72 @@ function updateChoreRow(choreRow, choreData) {
     }
 }
 
-
-function setupSwipeActions() {
+function setupClickAndSwipe() {
     document.querySelectorAll('.chore-list-row').forEach(row => {
         const item = row.querySelector('.chore-item');
         if (!item) return;
 
-        const bg = row.querySelector('.swipe-background');
-        const completeAction = bg.querySelector('.action-complete');
-        const priorityAction = bg.querySelector('.action-priority');
-
-        let touchstartX = 0, touchstartY = 0, deltaX = 0, deltaY = 0, isSwiping = false;
-        const tapThreshold = 10; // Increased threshold for taps
+        let wasSwiped = false;
         const swipeThreshold = 80;
 
-        // Attach listeners to the container row, not the md-list-item itself
-        row.addEventListener('touchstart', e => {
-            if (e.target.closest('md-icon-button, a, button')) return;
+        // --- Swipe Detection ---
+        let touchstartX = 0;
+        let deltaX = 0;
 
+        row.addEventListener('touchstart', e => {
+            wasSwiped = false;
+            deltaX = 0;
             touchstartX = e.changedTouches[0].screenX;
-            touchstartY = e.changedTouches[0].screenY;
-            isSwiping = true;
             item.classList.add('swiping');
-            document.body.classList.add('swiping-in-progress');
         }, { passive: true });
 
         row.addEventListener('touchmove', e => {
-            if (!isSwiping) return;
-
             deltaX = e.changedTouches[0].screenX - touchstartX;
-            deltaY = e.changedTouches[0].screenY - touchstartY;
 
-            if (Math.abs(deltaY) > Math.abs(deltaX)) {
-                isSwiping = false;
-                return;
-            }
+            // If movement is mostly horizontal, treat as a swipe
+            if (Math.abs(deltaX) > 10) {
+                wasSwiped = true;
+                e.preventDefault(); // Prevent vertical scroll
+                item.style.transform = `translateX(${deltaX}px)`;
 
-            e.preventDefault();
-            item.style.transform = `translateX(${deltaX}px)`;
-
-            const opacity = Math.min(Math.abs(deltaX) / swipeThreshold, 1);
-            if (deltaX > 0) {
-                completeAction.style.opacity = opacity;
-                priorityAction.style.opacity = 0;
-            } else {
-                priorityAction.style.opacity = opacity;
-                completeAction.style.opacity = 0;
+                const bg = row.querySelector('.swipe-background');
+                const completeAction = bg.querySelector('.action-complete');
+                const priorityAction = bg.querySelector('.action-priority');
+                const opacity = Math.min(Math.abs(deltaX) / swipeThreshold, 1);
+                if (deltaX > 0) {
+                    completeAction.style.opacity = opacity;
+                    priorityAction.style.opacity = 0;
+                } else {
+                    priorityAction.style.opacity = opacity;
+                    completeAction.style.opacity = 0;
+                }
             }
         }, { passive: false });
 
         row.addEventListener('touchend', e => {
-            if (!isSwiping) return;
-            isSwiping = false;
             item.classList.remove('swiping');
-
-            const choreId = row.dataset.choreId;
-
             if (Math.abs(deltaX) > swipeThreshold) {
+                const choreId = row.dataset.choreId;
                 const action = deltaX > 0 ? 'complete' : 'toggle-priority';
                 handleSwipeAction(action, choreId, item);
-            } else if (Math.abs(deltaX) < tapThreshold && Math.abs(deltaY) < tapThreshold) {
-                loadChoreDetails(choreId);
-                item.style.transform = '';
             } else {
-                item.style.transform = '';
+                item.style.transform = ''; // Snap back
             }
+            // Reset background opacity
+            const bg = row.querySelector('.swipe-background');
+            bg.querySelector('.action-complete').style.opacity = 0;
+            bg.querySelector('.action-priority').style.opacity = 0;
+        });
 
-            completeAction.style.opacity = 0;
-            priorityAction.style.opacity = 0;
-
-            setTimeout(() => {
-                document.body.classList.remove('swiping-in-progress');
-            }, 300);
-
-            deltaX = 0;
-            deltaY = 0;
+        // --- Click (Tap) Detection ---
+        row.addEventListener('click', e => {
+            if (wasSwiped) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+            const choreId = row.dataset.choreId;
+            loadChoreDetails(choreId);
         });
     });
 }
@@ -261,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
     );
     setupDialog('chore-detail-dialog', [], ['chore-detail-close-btn']);
 
-    setupSwipeActions();
+    setupClickAndSwipe();
 
     const addChoreForm = document.getElementById('add-chore-form');
     if (addChoreForm) {
