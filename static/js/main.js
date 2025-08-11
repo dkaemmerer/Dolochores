@@ -157,6 +157,7 @@ async function handleSwipeAction(action, choreId, element) {
 }
 
 function updateChoreRow(choreRow, choreData) {
+    const choreItem = choreRow.querySelector('.chore-item');
     const supportText = choreRow.querySelector('[slot="supporting-text"]');
     if (supportText) {
         const nextDue = choreData.next_due ? new Date(choreData.next_due).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A';
@@ -169,19 +170,22 @@ function updateChoreRow(choreRow, choreData) {
         statusBadge.textContent = choreData.status;
     }
 
+    // Update star icon and priority class
     const iconSlot = choreRow.querySelector('[slot="start"]');
     if (choreData.is_priority) {
+        choreItem.classList.add('priority');
         if (!iconSlot) {
             const newIcon = document.createElement('md-icon');
             newIcon.slot = 'start';
             newIcon.textContent = 'star';
-            choreRow.querySelector('.chore-item').prepend(newIcon);
+            choreItem.prepend(newIcon);
         } else {
             iconSlot.textContent = 'star';
         }
     } else {
+        choreItem.classList.remove('priority');
         if (iconSlot) {
-            iconSlot.remove();
+            iconSlot.textContent = 'star_border';
         }
     }
 }
