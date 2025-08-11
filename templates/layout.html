@@ -33,32 +33,37 @@
   </head>
   <body>
     <header>
-        <md-top-app-bar>
+        <md-top-app-bar class="top-app-bar">
             <md-icon-button href="{{ url_for('all_chores') }}" slot="navigation-icon" aria-label="Home">
                 <md-icon>home</md-icon>
             </md-icon-button>
-            <div slot="title">DoloChores</div>
-            <div slot="action-items" style="display: flex; align-items: center;">
-                <a href="{{ url_for('search') }}">
-                    <md-icon-button aria-label="Search">
-                        <md-icon>search</md-icon>
-                    </md-icon-button>
-                </a>
-                <div style="position: relative;">
-                    <md-icon-button id="more-actions-button" aria-label="More actions">
-                        <md-icon>more_vert</md-icon>
-                    </md-icon-button>
-                    <md-menu id="more-actions-menu" anchor="more-actions-button">
-                        <md-menu-item id="add-chore-menu-item">
-                            <div slot="headline">Add Chore</div>
-                        </md-menu-item>
-                        <md-menu-item id="email-chores-menu-item">
-                            <div slot="headline">Email Chores List</div>
-                        </md-menu-item>
-                    </md-menu>
-                </div>
+            <div slot="title" class="top-app-bar-title">
+                <form method="get" action="{{ url_for('search') }}" class="search-form">
+                    <md-outlined-text-field
+                        placeholder="Search..."
+                        name="q"
+                        value="{{ request.args.get('q', '') }}"
+                    >
+                        <md-icon slot="leading-icon">search</md-icon>
+                    </md-outlined-text-field>
+                </form>
+            </div>
+            <div slot="action-items" class="top-app-bar-actions">
+                <md-icon-button id="add-chore-button" aria-label="Add Chore">
+                    <md-icon>add_circle</md-icon>
+                </md-icon-button>
+                <md-icon-button id="email-button" aria-label="Email Chores">
+                    <md-icon>mail</md-icon>
+                </md-icon-button>
             </div>
         </md-top-app-bar>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
         <div class="tabs-container">
             <md-tabs id="main-tabs">
                 <md-primary-tab href="{{ url_for('all_chores') }}">
@@ -74,7 +79,7 @@
                     <md-icon slot="icon">person</md-icon>
                 </md-primary-tab>
             </md-tabs>
-            <md-menu id="my-chores-menu" anchor="my-chores-tab">
+            <md-menu id="my-chores-menu" anchor="my-chores-tab" menu-corner="start-start" anchor-corner="end-start">
                 {% for user in users %}
                 <md-menu-item href="{{ url_for('my_chores', username=user.name) }}">
                     <div slot="headline">{{ user.name }}'s Chores</div>
@@ -82,11 +87,7 @@
                 {% endfor %}
             </md-menu>
         </div>
-    </header>
-
-    <main class="container">
-        {% block content %}{% endblock %}
-    </main>
+    </footer>
 
     <md-dialog id="add-chore-dialog">
         <div slot="headline">Add a New Chore</div>

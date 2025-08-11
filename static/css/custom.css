@@ -8,6 +8,16 @@ body {
 main {
     flex: 1 0 auto;
     padding: 20px;
+    padding-bottom: 100px; /* Add padding to avoid overlap with fixed footer */
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background-color: var(--md-sys-color-surface);
 }
 
 a {
@@ -32,18 +42,18 @@ md-tabs {
 }
 
 .status-overdue {
-    background-color: var(--md-sys-color-error-container);
-    color: var(--md-sys-color-on-error-container);
+    background-color: #d93025; /* Red */
+    color: white;
 }
 
 .status-due-soon {
-    background-color: var(--md-sys-color-tertiary-container);
-    color: var(--md-sys-color-on-tertiary-container);
+    background-color: #f29900; /* Amber/Yellow */
+    color: white;
 }
 
 .status-completed-recently {
-    background-color: var(--md-sys-color-secondary-container);
-    color: var(--md-sys-color-on-secondary-container);
+    background-color: #1e8e3e; /* Green */
+    color: white;
 }
 
 /* Swipe functionality styles */
@@ -75,14 +85,14 @@ md-tabs {
 
 .action-complete {
     left: 0;
-    background-color: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
+    background-color: #1e8e3e; /* Green */
+    color: white;
 }
 
 .action-priority {
     right: 0;
-    background-color: var(--md-sys-color-tertiary);
-    color: var(--md-sys-color-on-tertiary);
+    background-color: #f29900; /* Amber/Yellow */
+    color: white;
 }
 
 .chore-item {
@@ -95,4 +105,29 @@ md-tabs {
 
 .chore-item.swiping {
     transition: none;
+}
+
+/* Top App Bar styles */
+.top-app-bar {
+    --md-top-app-bar-container-color: var(--md-sys-color-surface);
+}
+
+.top-app-bar-title {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.search-form {
+    width: 100%;
+    max-width: 400px;
+}
+
+.search-form md-outlined-text-field {
+    width: 100%;
+}
+
+.top-app-bar-actions {
+    display: flex;
+    align-items: center;
 }

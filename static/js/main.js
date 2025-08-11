@@ -1,17 +1,3 @@
-function setupMenu(buttonId, menuId) {
-    const button = document.getElementById(buttonId);
-    const menu = document.getElementById(menuId);
-    if (button && menu) {
-        button.addEventListener('click', (e) => {
-            // Prevent the tab's default navigation if it has an href
-            if (button.hasAttribute('href')) {
-                e.preventDefault();
-            }
-            menu.open = !menu.open;
-        });
-    }
-}
-
 function setupTabs() {
     const tabs = document.getElementById('main-tabs');
     if (!tabs) return;
@@ -25,7 +11,6 @@ function setupTabs() {
         tabs.activeTabIndex = 2;
     }
 
-    // The 'my-chores-tab' opens a menu instead of navigating
     const myChoresTab = document.getElementById('my-chores-tab');
     const myChoresMenu = document.getElementById('my-chores-menu');
     if (myChoresTab && myChoresMenu) {
@@ -35,12 +20,10 @@ function setupTabs() {
         });
     }
 
-    // Since tabs with hrefs navigate, we need to prevent that default
-    // action for the tab that opens a menu.
     tabs.addEventListener('change', (e) => {
         const tab = e.target.tabs[e.target.activeTabIndex];
         if (tab.id === 'my-chores-tab') {
-             // This event is not cancellable, so the menu logic is handled above.
+            // Logic is handled in the click listener above to open the menu
         } else if (tab.hasAttribute('href')) {
             window.location.href = tab.getAttribute('href');
         }
@@ -109,22 +92,24 @@ async function handleAction(url, method, element) {
     try {
         const response = await fetch(url, { method });
         if (response.ok) {
-            const container = element.closest('.swipe-container');
-            container.style.transition = 'opacity 300ms ease-out, height 300ms ease-out';
-            container.style.opacity = '0';
-            container.style.height = '0';
-            container.addEventListener('transitionend', () => {
-                container.remove();
-            });
+            if (element) {
+                const container = element.closest('.swipe-container');
+                container.style.transition = 'opacity 300ms ease-out, height 300ms ease-out';
+                container.style.opacity = '0';
+                container.style.height = '0';
+                container.addEventListener('transitionend', () => {
+                    container.remove();
+                });
+            }
         } else {
             const error = await response.json();
             alert(`Error: ${error.message}`);
-            element.style.transform = '';
+            if (element) element.style.transform = '';
         }
     } catch (err) {
         console.error(`Failed to perform action:`, err);
         alert('An error occurred. Please try again.');
-        element.style.transform = '';
+        if (element) element.style.transform = '';
     }
 }
 
@@ -137,7 +122,7 @@ function setupSwipeActions() {
         const completeAction = bg.querySelector('.action-complete');
         const priorityAction = bg.querySelector('.action-priority');
 
-        let touchstartX = 0, touchstartY = 0, touchmoveX = 0, touchmoveY = 0, deltaX = 0, deltaY = 0, isSwiping = false;
+        let touchstartX = 0, touchstartY = 0, deltaX = 0, deltaY = 0, isSwiping = false;
         const tapThreshold = 5;
         const swipeThreshold = 80;
 
@@ -204,26 +189,18 @@ function setupSwipeActions() {
     });
 }
 
-
 // --- Main Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Setup menus
-    setupMenu('more-actions-button', 'more-actions-menu');
-
-    // Setup tabs and tab-based menus
     setupTabs();
 
-    // Setup dialogs
     setupDialog('add-chore-dialog',
-        ['add-chore-menu-item'],
+        ['add-chore-button'],
         ['add-chore-cancel-btn']
     );
     setupDialog('chore-detail-dialog', [], ['chore-detail-close-btn']);
 
-    // Setup swipe actions
     setupSwipeActions();
 
-    // --- Add Chore Form ---
     const addChoreForm = document.getElementById('add-chore-form');
     if (addChoreForm) {
         addChoreForm.addEventListener('submit', async (e) => {
@@ -253,7 +230,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Chore Detail Delete Button ---
     const deleteBtn = document.getElementById('chore-detail-delete-btn');
     if (deleteBtn) {
         deleteBtn.addEventListener('click', async (e) => {
@@ -265,10 +241,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Email Chores Button ---
-    const emailChoresBtn = document.getElementById('email-chores-menu-item');
-    if (emailChoresBtn) {
-        emailChoresBtn.addEventListener('click', async (e) => {
+    const emailBtn = document.getElementById('email-button');
+    if (emailBtn) {
+        emailBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             alert('Sending email...');
             try {
