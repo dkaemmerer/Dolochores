@@ -20,13 +20,13 @@ header {
 main.scrollable-content {
     flex-grow: 1; /* Allow main content to grow */
     overflow-y: auto; /* Allow only main content to scroll */
-    padding: 20px;
+    padding-bottom: 80px; /* Adjust padding to avoid overlap with fixed footer */
 }
 
 footer {
     flex-shrink: 0; /* Prevent footer from shrinking */
     z-index: 100;
-    background-color: var(--md-sys-color-surface);
+    background-color: var(--md-sys-color-surface-container);
 }
 
 a {
@@ -118,7 +118,7 @@ md-tabs {
 
 /* Top App Bar styles */
 .top-app-bar {
-    --md-top-app-bar-container-color: var(--md-sys-color-surface);
+    --md-top-app-bar-container-color: var(--md-sys-color-surface-container);
 }
 
 .top-bar-layout {
@@ -134,6 +134,10 @@ md-tabs {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+}
+
+.top-bar-end {
+    padding-right: 8px; /* Add padding to match start */
 }
 
 .top-bar-center {
@@ -152,6 +156,7 @@ md-tabs {
 .search-form md-outlined-text-field {
     width: 100%;
     --md-outlined-text-field-container-shape: 28px;
+    --md-outlined-text-field-density: -2;
 }
 
 /* Make add chore dialog taller */

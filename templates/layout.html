@@ -63,7 +63,7 @@
         </md-top-app-bar>
     </header>
 
-    <main class="container scrollable-content">
+    <main class="scrollable-content">
         {% block content %}{% endblock %}
     </main>
 
@@ -187,9 +187,13 @@
             </form>
         </div>
         <div slot="actions">
-            <md-text-button id="chore-detail-delete-btn" style="--md-text-button-label-text-color: var(--md-sys-color-error);">Delete</md-text-button>
+            <md-icon-button id="chore-detail-delete-btn" aria-label="Delete chore">
+                <md-icon>delete</md-icon>
+            </md-icon-button>
             <div style="flex: 1;"></div> <!-- Spacer -->
-            <md-text-button id="chore-detail-edit-btn">Edit</md-text-button>
+            <md-icon-button id="chore-detail-edit-btn" aria-label="Edit chore">
+                <md-icon>edit</md-icon>
+            </md-icon-button>
             <md-filled-button id="chore-detail-save-btn" type="submit" form="chore-edit-form" style="display: none;">Save</md-filled-button>
         </div>
     </md-dialog>
