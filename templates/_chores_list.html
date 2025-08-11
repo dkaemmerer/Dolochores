@@ -14,7 +14,6 @@
         <md-list-item
             class="chore-item"
             data-chore-id="{{ chore.id }}"
-            onclick="loadChoreDetails({{ chore.id }})"
         >
             <div slot="headline">{{ chore.title }}</div>
             <div slot="supporting-text">{{ chore.assignee.name }} &bull; Due: {{ chore.next_due.strftime('%b %d') if chore.next_due else 'N/A' }}</div>

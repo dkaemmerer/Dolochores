@@ -10,21 +10,17 @@ main {
     padding: 20px;
 }
 
-/* Responsive navigation */
-@media (min-width: 601px) {
-    .mobile-nav {
-        display: none;
-    }
-}
-
-@media (max-width: 600px) {
-    .desktop-nav {
-        display: none;
-    }
-}
-
 a {
     text-decoration: none;
+}
+
+.tabs-container {
+    background-color: var(--md-sys-color-surface);
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+
+md-tabs {
+    --md-tabs-container-color: var(--md-sys-color-surface);
 }
 
 .status-badge {
@@ -54,7 +50,6 @@ a {
 .swipe-container {
     position: relative;
     overflow: hidden;
-    background-color: var(--md-sys-color-surface-container-low);
 }
 
 .swipe-background {
@@ -63,42 +58,31 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--md-sys-color-on-primary);
 }
 
 .swipe-action {
+    position: absolute;
+    top: 0;
+    height: 100%;
     display: flex;
     align-items: center;
     gap: 16px;
     padding: 0 24px;
+    color: var(--md-sys-color-on-primary);
     opacity: 0;
     transition: opacity 150ms ease-in-out;
-    height: 100%;
 }
 
 .action-complete {
+    left: 0;
     background-color: var(--md-sys-color-primary);
     color: var(--md-sys-color-on-primary);
-    justify-content: flex-start;
-    width: 100%;
 }
 
 .action-priority {
+    right: 0;
     background-color: var(--md-sys-color-tertiary);
     color: var(--md-sys-color-on-tertiary);
-    justify-content: flex-end;
-    width: 100%;
-}
-
-.chore-item.swiping {
-    transition: none;
-}
-
-.chore-item.snap-back {
-    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .chore-item {
@@ -106,4 +90,9 @@ a {
     position: relative;
     z-index: 1;
     background-color: var(--md-sys-color-surface-container-lowest);
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chore-item.swiping {
+    transition: none;
 }

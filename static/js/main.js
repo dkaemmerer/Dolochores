@@ -2,10 +2,49 @@ function setupMenu(buttonId, menuId) {
     const button = document.getElementById(buttonId);
     const menu = document.getElementById(menuId);
     if (button && menu) {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (e) => {
+            // Prevent the tab's default navigation if it has an href
+            if (button.hasAttribute('href')) {
+                e.preventDefault();
+            }
             menu.open = !menu.open;
         });
     }
+}
+
+function setupTabs() {
+    const tabs = document.getElementById('main-tabs');
+    if (!tabs) return;
+
+    const currentPath = window.location.pathname;
+    if (currentPath === '/') {
+        tabs.activeTabIndex = 0;
+    } else if (currentPath.includes('/priorities')) {
+        tabs.activeTabIndex = 1;
+    } else if (currentPath.includes('/my-chores')) {
+        tabs.activeTabIndex = 2;
+    }
+
+    // The 'my-chores-tab' opens a menu instead of navigating
+    const myChoresTab = document.getElementById('my-chores-tab');
+    const myChoresMenu = document.getElementById('my-chores-menu');
+    if (myChoresTab && myChoresMenu) {
+        myChoresTab.addEventListener('click', (e) => {
+            e.preventDefault();
+            myChoresMenu.open = !myChoresMenu.open;
+        });
+    }
+
+    // Since tabs with hrefs navigate, we need to prevent that default
+    // action for the tab that opens a menu.
+    tabs.addEventListener('change', (e) => {
+        const tab = e.target.tabs[e.target.activeTabIndex];
+        if (tab.id === 'my-chores-tab') {
+             // This event is not cancellable, so the menu logic is handled above.
+        } else if (tab.hasAttribute('href')) {
+            window.location.href = tab.getAttribute('href');
+        }
+    });
 }
 
 function setupDialog(dialogId, openTriggerIds = [], closeTriggerIds = []) {
@@ -32,7 +71,6 @@ function setupDialog(dialogId, openTriggerIds = [], closeTriggerIds = []) {
 }
 
 async function loadChoreDetails(choreId) {
-    // Prevent loading details if a swipe is in progress
     if (document.body.classList.contains('swiping-in-progress')) return;
 
     try {
@@ -67,18 +105,26 @@ async function loadChoreDetails(choreId) {
     }
 }
 
-async function handleAction(url, method) {
+async function handleAction(url, method, element) {
     try {
         const response = await fetch(url, { method });
         if (response.ok) {
-            location.reload();
+            const container = element.closest('.swipe-container');
+            container.style.transition = 'opacity 300ms ease-out, height 300ms ease-out';
+            container.style.opacity = '0';
+            container.style.height = '0';
+            container.addEventListener('transitionend', () => {
+                container.remove();
+            });
         } else {
             const error = await response.json();
             alert(`Error: ${error.message}`);
+            element.style.transform = '';
         }
     } catch (err) {
         console.error(`Failed to perform action:`, err);
         alert('An error occurred. Please try again.');
+        element.style.transform = '';
     }
 }
 
@@ -91,77 +137,69 @@ function setupSwipeActions() {
         const completeAction = bg.querySelector('.action-complete');
         const priorityAction = bg.querySelector('.action-priority');
 
-        let touchstartX = 0;
-        let touchmoveX = 0;
-        let deltaX = 0;
-        let isSwiping = false;
-        const swipeThreshold = 80; // pixels
+        let touchstartX = 0, touchstartY = 0, touchmoveX = 0, touchmoveY = 0, deltaX = 0, deltaY = 0, isSwiping = false;
+        const tapThreshold = 5;
+        const swipeThreshold = 80;
 
         item.addEventListener('touchstart', e => {
-            // Don't swipe if clicking an interactive element inside the item
             if (e.target.closest('md-icon-button, a, button')) return;
 
             touchstartX = e.changedTouches[0].screenX;
+            touchstartY = e.changedTouches[0].screenY;
             isSwiping = true;
             item.classList.add('swiping');
-            document.body.classList.add('swiping-in-progress'); // Prevent clicks
+            document.body.classList.add('swiping-in-progress');
         }, { passive: true });
 
         item.addEventListener('touchmove', e => {
             if (!isSwiping) return;
 
-            touchmoveX = e.changedTouches[0].screenX;
-            deltaX = touchmoveX - touchstartX;
+            deltaX = e.changedTouches[0].screenX - touchstartX;
+            deltaY = e.changedTouches[0].screenY - touchstartY;
 
-            // Allow vertical scroll if swipe is mostly vertical
-            if (Math.abs(e.changedTouches[0].screenY - e.target.getBoundingClientRect().top) > Math.abs(deltaX)) {
+            if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                isSwiping = false;
                 return;
             }
 
+            e.preventDefault();
             item.style.transform = `translateX(${deltaX}px)`;
 
-            if (deltaX > 0) { // Swiping right (complete)
-                priorityAction.style.display = 'none';
-                completeAction.style.display = 'flex';
-                const opacity = Math.min(Math.abs(deltaX) / swipeThreshold, 1);
+            const opacity = Math.min(Math.abs(deltaX) / swipeThreshold, 1);
+            if (deltaX > 0) {
                 completeAction.style.opacity = opacity;
-            } else { // Swiping left (priority)
-                completeAction.style.display = 'none';
-                priorityAction.style.display = 'flex';
-                const opacity = Math.min(Math.abs(deltaX) / swipeThreshold, 1);
+                priorityAction.style.opacity = 0;
+            } else {
                 priorityAction.style.opacity = opacity;
+                completeAction.style.opacity = 0;
             }
-        }, { passive: true });
+        }, { passive: false });
 
         item.addEventListener('touchend', e => {
             if (!isSwiping) return;
             isSwiping = false;
-
             item.classList.remove('swiping');
-            item.classList.add('snap-back');
 
             if (Math.abs(deltaX) > swipeThreshold) {
                 const choreId = item.dataset.choreId;
-                const url = deltaX > 0
-                    ? `/api/chores/${choreId}/complete`
-                    : `/api/chores/${choreId}/toggle-priority`;
-
-                // Animate out
-                item.style.transform = `translateX(${Math.sign(deltaX) * 100}vw)`;
-                item.addEventListener('transitionend', () => {
-                    handleAction(url, 'POST');
-                }, { once: true });
-
+                const url = deltaX > 0 ? `/api/chores/${choreId}/complete` : `/api/chores/${choreId}/toggle-priority`;
+                handleAction(url, 'POST', item);
+            } else if (Math.abs(deltaX) < tapThreshold && Math.abs(deltaY) < tapThreshold) {
+                loadChoreDetails(item.dataset.choreId);
+                item.style.transform = '';
             } else {
                 item.style.transform = '';
             }
 
+            completeAction.style.opacity = 0;
+            priorityAction.style.opacity = 0;
+
             setTimeout(() => {
-                if (item) item.classList.remove('snap-back');
                 document.body.classList.remove('swiping-in-progress');
             }, 300);
 
             deltaX = 0;
+            deltaY = 0;
         });
     });
 }
@@ -170,12 +208,14 @@ function setupSwipeActions() {
 // --- Main Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
     // Setup menus
-    setupMenu('my-chores-button', 'my-chores-menu');
     setupMenu('more-actions-button', 'more-actions-menu');
+
+    // Setup tabs and tab-based menus
+    setupTabs();
 
     // Setup dialogs
     setupDialog('add-chore-dialog',
-        ['add-chore-menu-item', 'add-chore-menu-item-mobile'],
+        ['add-chore-menu-item'],
         ['add-chore-cancel-btn']
     );
     setupDialog('chore-detail-dialog', [], ['chore-detail-close-btn']);
@@ -219,28 +259,26 @@ document.addEventListener('DOMContentLoaded', () => {
         deleteBtn.addEventListener('click', async (e) => {
             const choreId = e.currentTarget.dataset.choreId;
             if (choreId && confirm('Are you sure you want to delete this chore?')) {
-                await handleAction(`/api/chores/${choreId}`, 'DELETE');
+                const choreItem = document.querySelector(`.chore-item[data-chore-id='${choreId}']`);
+                await handleAction(`/api/chores/${choreId}`, 'DELETE', choreItem);
             }
         });
     }
 
     // --- Email Chores Button ---
-    const emailChoresDesktop = document.getElementById('email-chores-menu-item-desktop');
-    const emailChoresMobile = document.getElementById('email-chores-menu-item-mobile');
-
-    const emailHandler = async (e) => {
-        e.preventDefault();
-        alert('Sending email...');
-        try {
-            const response = await fetch('/api/email-chores', { method: 'POST' });
-            const result = await response.json();
-            alert(result.message);
-        } catch (err) {
-            console.error('Failed to send email:', err);
-            alert('An error occurred while sending the email.');
-        }
-    };
-
-    if (emailChoresDesktop) emailChoresDesktop.addEventListener('click', emailHandler);
-    if (emailChoresMobile) emailChoresMobile.addEventListener('click', emailHandler);
+    const emailChoresBtn = document.getElementById('email-chores-menu-item');
+    if (emailChoresBtn) {
+        emailChoresBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            alert('Sending email...');
+            try {
+                const response = await fetch('/api/email-chores', { method: 'POST' });
+                const result = await response.json();
+                alert(result.message);
+            } catch (err) {
+                console.error('Failed to send email:', err);
+                alert('An error occurred while sending the email.');
+            }
+        });
+    }
 });

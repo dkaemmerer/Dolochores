@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <!-- Material Web Components -->
     <script type="importmap">
       {
@@ -35,76 +35,53 @@
     <header>
         <md-top-app-bar>
             <md-icon-button href="{{ url_for('all_chores') }}" slot="navigation-icon" aria-label="Home">
-                <span class="material-icons">home</span>
+                <md-icon>home</md-icon>
             </md-icon-button>
             <div slot="title">DoloChores</div>
             <div slot="action-items" style="display: flex; align-items: center;">
-                <a href="{{ url_for('all_chores') }}" class="desktop-nav">
-                    <md-text-button>All Chores</md-text-button>
-                </a>
-                <a href="{{ url_for('priorities') }}" class="desktop-nav">
-                    <md-text-button>Priorities</md-text-button>
-                </a>
-
-                <div style="position: relative;" class="desktop-nav">
-                    <md-text-button id="my-chores-button">My Chores <span class="material-icons">arrow_drop_down</span></md-text-button>
-                    <md-menu id="my-chores-menu" anchor="my-chores-button">
-                        {% for user in users %}
-                        <md-menu-item href="{{ url_for('my_chores', username=user.name) }}">
-                            <div slot="headline">{{ user.name }}'s Chores</div>
-                        </md-menu-item>
-                        {% endfor %}
-                    </md-menu>
-                </div>
-
                 <a href="{{ url_for('search') }}">
                     <md-icon-button aria-label="Search">
-                        <span class="material-icons">search</span>
+                        <md-icon>search</md-icon>
                     </md-icon-button>
                 </a>
-
                 <div style="position: relative;">
                     <md-icon-button id="more-actions-button" aria-label="More actions">
-                        <span class="material-icons">more_vert</span>
+                        <md-icon>more_vert</md-icon>
                     </md-icon-button>
                     <md-menu id="more-actions-menu" anchor="more-actions-button">
-                        <md-menu-item id="add-chore-menu-item" class="desktop-nav">
+                        <md-menu-item id="add-chore-menu-item">
                             <div slot="headline">Add Chore</div>
                         </md-menu-item>
-                        <md-menu-item id="email-chores-menu-item-desktop">
-                            <div slot="headline">Email Chores List</div>
-                        </md-menu-item>
-                         <md-sub-menu class="mobile-nav">
-                            <md-menu-item slot="item">
-                                <div slot="headline">Navigation</div>
-                            </md-menu-item>
-                            <md-menu slot="menu">
-                                <md-menu-item href="{{ url_for('all_chores') }}"><div slot="headline">All Chores</div></md-menu-item>
-                                <md-menu-item href="{{ url_for('priorities') }}"><div slot="headline">Priorities</div></md-menu-item>
-                            </md-menu>
-                        </md-sub-menu>
-                        <md-sub-menu class="mobile-nav">
-                            <md-menu-item slot="item">
-                                <div slot="headline">My Chores</div>
-                            </md-menu-item>
-                            <md-menu slot="menu">
-                                {% for user in users %}
-                                <md-menu-item href="{{ url_for('my_chores', username=user.name) }}">
-                                    <div slot="headline">{{ user.name }}'s Chores</div>
-                                </md-menu-item>
-                                {% endfor %}
-                            </md-menu>
-                        </md-sub-menu>
-                        <md-menu-item id="add-chore-menu-item-mobile" class="mobile-nav">
-                            <div slot="headline">Add Chore</div>
-                        </md-menu-item>
-                         <md-menu-item id="email-chores-menu-item-mobile">
+                        <md-menu-item id="email-chores-menu-item">
                             <div slot="headline">Email Chores List</div>
                         </md-menu-item>
                     </md-menu>
                 </div>
             </div>
         </md-top-app-bar>
+        <div class="tabs-container">
+            <md-tabs id="main-tabs">
+                <md-primary-tab href="{{ url_for('all_chores') }}">
+                    All Chores
+                    <md-icon slot="icon">list</md-icon>
+                </md-primary-tab>
+                <md-primary-tab href="{{ url_for('priorities') }}">
+                    Priorities
+                    <md-icon slot="icon">star</md-icon>
+                </md-primary-tab>
+                <md-primary-tab id="my-chores-tab">
+                    My Chores
+                    <md-icon slot="icon">person</md-icon>
+                </md-primary-tab>
+            </md-tabs>
+            <md-menu id="my-chores-menu" anchor="my-chores-tab">
+                {% for user in users %}
+                <md-menu-item href="{{ url_for('my_chores', username=user.name) }}">
+                    <div slot="headline">{{ user.name }}'s Chores</div>
+                </md-menu-item>
+                {% endfor %}
+            </md-menu>
+        </div>
     </header>
 
     <main class="container">
