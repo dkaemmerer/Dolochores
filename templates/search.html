@@ -2,30 +2,13 @@
 
 {% block content %}
 <section>
-    <h2>Search Chores</h2>
-    <form method="get" action="{{ url_for('search') }}" style="display: flex; align-items: flex-start; gap: 16px; margin-top: 20px;">
-        <md-outlined-text-field
-            label="Search by title, assignee, or notes..."
-            name="q"
-            value="{{ request.args.get('q', '') }}"
-            style="flex-grow: 1;"
-            autofocus
-        >
-            <md-icon slot="leading-icon">search</md-icon>
-        </md-outlined-text-field>
-
-        <md-filled-button type="submit">
-            Search
-            <md-icon slot="icon-trailing">send</md-icon>
-        </md-filled-button>
-    </form>
-
     {% if chores is defined %}
-        <div style="margin-top: 32px;">
-            <h3>Search Results</h3>
-            <md-divider></md-divider>
-            {% include '_chores_list.html' %}
-        </div>
+        <h2>Search Results</h2>
+        <md-divider></md-divider>
+        {% include '_chores_list.html' %}
+    {% else %}
+        <h2>Search Chores</h2>
+        <p>Use the search bar at the top to find chores.</p>
     {% endif %}
 </section>
 {% endblock %}

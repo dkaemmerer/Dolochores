@@ -51,7 +51,7 @@ md-tabs {
     color: white;
 }
 
-.status-completed-recently {
+.status-done {
     background-color: #1e8e3e; /* Green */
     color: white;
 }
@@ -142,6 +142,7 @@ md-tabs {
 
 .search-form md-outlined-text-field {
     width: 100%;
+    --md-outlined-text-field-container-shape: 28px;
 }
 
 /* Make add chore dialog taller */

@@ -138,14 +138,61 @@
     </md-dialog>
 
     <md-dialog id="chore-detail-dialog">
-      <div slot="headline" id="chore-detail-title">Chore Details</div>
-      <div slot="content" id="chore-detail-content">
-        <!-- Chore details will be populated here by JS -->
-      </div>
-      <div slot="actions">
-        <md-text-button id="chore-detail-delete-btn" style="--md-text-button-label-text-color: var(--md-sys-color-error);">Delete</md-text-button>
-        <md-text-button id="chore-detail-close-btn">Close</md-text-button>
-      </div>
+        <div slot="headline" style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="chore-detail-title">Chore Details</span>
+            <md-icon-button id="chore-detail-close-icon-btn" form="chore-edit-form" value="close" aria-label="Close dialog">
+                <md-icon>close</md-icon>
+            </md-icon-button>
+        </div>
+        <div slot="content">
+            <div id="chore-detail-readonly-view">
+                <!-- Chore details will be populated here by JS -->
+            </div>
+            <form id="chore-edit-form" style="display: none; flex-direction: column; gap: 16px;">
+                <input type="hidden" name="chore_id">
+                <md-outlined-text-field label="Title" name="title" required></md-outlined-text-field>
+                <md-outlined-select label="Assignee" name="user_id" required>
+                    {% for user in users %}
+                    <md-select-option value="{{ user.id }}">
+                        <div slot="headline">{{ user.name }}</div>
+                    </md-select-option>
+                    {% endfor %}
+                </md-outlined-select>
+                <md-outlined-select label="Category" name="category">
+                     <md-select-option value="all rooms"><div slot="headline">all rooms</div></md-select-option>
+                    <md-select-option value="bathroom"><div slot="headline">bathroom</div></md-select-option>
+                    <md-select-option value="bedrooms"><div slot="headline">bedrooms</div></md-select-option>
+                    <md-select-option value="counters"><div slot="headline">counters</div></md-select-option>
+                    <md-select-option value="floors"><div slot="headline">floors</div></md-select-option>
+                    <md-select-option value="garage"><div slot="headline">garage</div></md-select-option>
+                    <md-select-option value="hvac"><div slot="headline">hvac</div></md-select-option>
+                    <md-select-option value="kitchen"><div slot="headline">kitchen</div></md-select-option>
+                    <md-select-option value="laundry"><div slot="headline">laundry</div></md-select-option>
+                    <md-select-option value="outside"><div slot="headline">outside</div></md-select-option>
+                    <md-select-option value="plumbing"><div slot="headline">plumbing</div></md-select-option>
+                    <md-select-option value="riley"><div slot="headline">riley</div></md-select-option>
+                </md-outlined-select>
+                <md-outlined-select label="Frequency (days)" name="frequency" required>
+                    <md-select-option value="14"><div slot="headline">14</div></md-select-option>
+                    <md-select-option value="30"><div slot="headline">30</div></md-select-option>
+                    <md-select-option value="90"><div slot="headline">90</div></md-select-option>
+                    <md-select-option value="182"><div slot="headline">182</div></md-select-option>
+                    <md-select-option value="365"><div slot="headline">365</div></md-select-option>
+                    <md-select-option value="730"><div slot="headline">730</div></md-select-option>
+                    <md-select-option value="1095"><div slot="headline">1095</div></md-select-option>
+                    <md-select-option value="2555"><div slot="headline">2555</div></md-select-option>
+                </md-outlined-select>
+                <md-outlined-text-field label="Last Completed" name="last_completed" type="date" required></md-outlined-text-field>
+                <md-outlined-text-field label="Notes" name="notes" type="textarea"></md-outlined-text-field>
+                <md-checkbox name="is_priority" touch-target="wrapper">Priority</md-checkbox>
+            </form>
+        </div>
+        <div slot="actions">
+            <md-text-button id="chore-detail-delete-btn" style="--md-text-button-label-text-color: var(--md-sys-color-error);">Delete</md-text-button>
+            <div style="flex: 1;"></div> <!-- Spacer -->
+            <md-text-button id="chore-detail-edit-btn">Edit</md-text-button>
+            <md-filled-button id="chore-detail-save-btn" type="submit" form="chore-edit-form" style="display: none;">Save</md-filled-button>
+        </div>
     </md-dialog>
 
     <!-- App-specific JS -->

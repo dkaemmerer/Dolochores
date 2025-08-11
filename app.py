@@ -85,7 +85,7 @@ class Chore(db.Model):
             if today <= next_due_date <= today + timedelta(days=14):
                 return "Due Soon"
 
-        return "Completed Recently"
+        return "Done"
 
     def __repr__(self):
         return f'<Chore {self.title}>'

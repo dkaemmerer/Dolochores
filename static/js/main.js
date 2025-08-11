@@ -53,31 +53,65 @@ function setupDialog(dialogId, openTriggerIds = [], closeTriggerIds = []) {
     });
 }
 
+// --- Chore Detail Dialog Logic ---
+
+let currentChoreData = {};
+let isEditMode = false;
+
+function populateReadOnlyView(chore) {
+    const contentEl = document.getElementById('chore-detail-readonly-view');
+    contentEl.innerHTML = `
+        <p><strong>Assignee:</strong> ${chore.assignee}</p>
+        <p><strong>Category:</strong> ${chore.category || 'N/A'}</p>
+        <p><strong>Status:</strong> ${chore.status}</p>
+        <p><strong>Next Due:</strong> ${chore.next_due ? new Date(chore.next_due).toLocaleDateString() : 'N/A'}</p>
+        <p><strong>Frequency:</strong> Every ${chore.frequency} days</p>
+        <p><strong>Last Completed:</strong> ${chore.last_completed ? new Date(chore.last_completed).toLocaleDateString() : 'N/A'}</p>
+        ${chore.notes ? `<p><strong>Notes:</strong><br>${chore.notes}</p>` : ''}
+    `;
+}
+
+function populateEditForm(chore) {
+    const form = document.getElementById('chore-edit-form');
+    form.querySelector('[name="chore_id"]').value = chore.id;
+    form.querySelector('[name="title"]').value = chore.title;
+    form.querySelector('[name="user_id"]').value = chore.user_id;
+    form.querySelector('[name="category"]').value = chore.category;
+    form.querySelector('[name="frequency"]').value = chore.frequency;
+    form.querySelector('[name="last_completed"]').value = chore.last_completed;
+    form.querySelector('[name="notes"]').value = chore.notes;
+    form.querySelector('[name="is_priority"]').checked = chore.is_priority;
+}
+
+function setDialogMode(edit = false) {
+    isEditMode = edit;
+    const readOnlyView = document.getElementById('chore-detail-readonly-view');
+    const editForm = document.getElementById('chore-edit-form');
+    const editBtn = document.getElementById('chore-detail-edit-btn');
+    const saveBtn = document.getElementById('chore-detail-save-btn');
+    const deleteBtn = document.getElementById('chore-detail-delete-btn');
+
+    readOnlyView.style.display = edit ? 'none' : 'block';
+    editForm.style.display = edit ? 'flex' : 'none';
+    editBtn.style.display = edit ? 'none' : 'inline-flex';
+    saveBtn.style.display = edit ? 'inline-flex' : 'none';
+    deleteBtn.style.display = edit ? 'none' : 'inline-flex'; // Hide delete in edit mode
+}
+
 async function loadChoreDetails(choreId) {
     try {
         const response = await fetch(`/api/chores/${choreId}`);
         if (!response.ok) throw new Error('Failed to fetch chore details');
-        const chore = await response.json();
+        currentChoreData = await response.json();
 
         const dialog = document.getElementById('chore-detail-dialog');
         const titleEl = document.getElementById('chore-detail-title');
-        const contentEl = document.getElementById('chore-detail-content');
-        const deleteBtn = document.getElementById('chore-detail-delete-btn');
 
-        if (!dialog || !titleEl || !contentEl || !deleteBtn) return;
+        titleEl.textContent = currentChoreData.title;
+        populateReadOnlyView(currentChoreData);
+        populateEditForm(currentChoreData);
 
-        titleEl.textContent = chore.title;
-        contentEl.innerHTML = `
-            <p><strong>Assignee:</strong> ${chore.assignee}</p>
-            <p><strong>Category:</strong> ${chore.category || 'N/A'}</p>
-            <p><strong>Status:</strong> ${chore.status}</p>
-            <p><strong>Next Due:</strong> ${chore.next_due ? new Date(chore.next_due).toLocaleDateString() : 'N/A'}</p>
-            <p><strong>Frequency:</strong> Every ${chore.frequency} days</p>
-            <p><strong>Last Completed:</strong> ${chore.last_completed ? new Date(chore.last_completed).toLocaleDateString() : 'N/A'}</p>
-            ${chore.notes ? `<p><strong>Notes:</strong><br>${chore.notes}</p>` : ''}
-        `;
-        deleteBtn.dataset.choreId = choreId;
-
+        setDialogMode(false); // Start in read-only mode
         dialog.show();
 
     } catch (err) {
@@ -85,6 +119,8 @@ async function loadChoreDetails(choreId) {
         alert('Could not load chore details.');
     }
 }
+
+// --- Swipe and Action Logic ---
 
 async function handleSwipeAction(action, choreId, element) {
     const url = `/api/chores/${choreId}/${action}`;
@@ -158,8 +194,6 @@ function setupClickAndSwipe() {
 
         let wasSwiped = false;
         const swipeThreshold = 80;
-
-        // --- Swipe Detection ---
         let touchstartX = 0;
         let deltaX = 0;
 
@@ -172,11 +206,9 @@ function setupClickAndSwipe() {
 
         row.addEventListener('touchmove', e => {
             deltaX = e.changedTouches[0].screenX - touchstartX;
-
-            // If movement is mostly horizontal, treat as a swipe
             if (Math.abs(deltaX) > 10) {
                 wasSwiped = true;
-                e.preventDefault(); // Prevent vertical scroll
+                e.preventDefault();
                 item.style.transform = `translateX(${deltaX}px)`;
 
                 const bg = row.querySelector('.swipe-background');
@@ -200,15 +232,13 @@ function setupClickAndSwipe() {
                 const action = deltaX > 0 ? 'complete' : 'toggle-priority';
                 handleSwipeAction(action, choreId, item);
             } else {
-                item.style.transform = ''; // Snap back
+                item.style.transform = '';
             }
-            // Reset background opacity
             const bg = row.querySelector('.swipe-background');
             bg.querySelector('.action-complete').style.opacity = 0;
             bg.querySelector('.action-priority').style.opacity = 0;
         });
 
-        // --- Click (Tap) Detection ---
         row.addEventListener('click', e => {
             if (wasSwiped) {
                 e.preventDefault();
@@ -244,9 +274,49 @@ document.addEventListener('DOMContentLoaded', () => {
         ['add-chore-button'],
         ['add-chore-cancel-btn']
     );
-    setupDialog('chore-detail-dialog', [], ['chore-detail-close-btn']);
+    // Detail dialog is opened via loadChoreDetails, but closed here
+    setupDialog('chore-detail-dialog', [], ['chore-detail-close-icon-btn']);
 
     setupClickAndSwipe();
+
+    // --- Edit/Save Chore Logic ---
+    const editBtn = document.getElementById('chore-detail-edit-btn');
+    if (editBtn) {
+        editBtn.addEventListener('click', () => setDialogMode(true));
+    }
+
+    const editForm = document.getElementById('chore-edit-form');
+    if (editForm) {
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(editForm);
+            const choreId = formData.get('chore_id');
+            // 'is_priority' is only present if checked, so handle that
+            const data = {
+                ...Object.fromEntries(formData.entries()),
+                is_priority: formData.has('is_priority')
+            };
+
+            try {
+                const response = await fetch(`/api/chores/${choreId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+                if (response.ok) {
+                    document.getElementById('chore-detail-dialog').close();
+                    location.reload(); // Reload to see changes reflected everywhere
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.message}`);
+                }
+            } catch (err) {
+                console.error('Failed to edit chore:', err);
+                alert('An error occurred while saving.');
+            }
+        });
+    }
+
 
     const addChoreForm = document.getElementById('add-chore-form');
     if (addChoreForm) {
@@ -280,12 +350,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const deleteBtn = document.getElementById('chore-detail-delete-btn');
     if (deleteBtn) {
         deleteBtn.addEventListener('click', async (e) => {
-            const choreId = e.currentTarget.dataset.choreId;
+            const choreId = currentChoreData.id;
             if (choreId && confirm('Are you sure you want to delete this chore?')) {
                 const choreRow = document.querySelector(`.chore-list-row[data-chore-id='${choreId}']`);
                 try {
                     const response = await fetch(`/api/chores/${choreId}`, { method: 'DELETE' });
                     if (response.ok) {
+                        document.getElementById('chore-detail-dialog').close();
                         choreRow.style.transition = 'opacity 300ms ease-out';
                         choreRow.style.opacity = '0';
                         choreRow.addEventListener('transitionend', () => choreRow.remove(), { once: true });
