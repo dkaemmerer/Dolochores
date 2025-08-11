@@ -14,11 +14,12 @@ body {
 header {
     /* position: sticky is not needed with grid layout if we don't want the whole page to scroll */
     z-index: 100;
-    background-color: var(--md-sys-color-surface-container-lowest); /* Give header a background */
+    /* background-color: var(--md-sys-color-surface-container-lowest); */ /* This was causing the issue */
 }
 
 main.scrollable-content {
     overflow-y: auto; /* Allow only main content to scroll */
+    overscroll-behavior-y: contain; /* Prevent scroll-chaining to the body */
     /* No padding-bottom needed as footer is not overlapping */
 }
 
@@ -123,7 +124,7 @@ md-tabs {
 
 /* Top App Bar styles */
 .top-app-bar {
-    --md-top-app-bar-container-color: #006a6a; /* New Teal Green */
+    /* --md-top-app-bar-container-color is now handled by the .top-bar-layout background */
 }
 
 .top-bar-layout {
@@ -133,6 +134,7 @@ md-tabs {
     justify-content: space-between;
     gap: 8px;
     padding: 8px 0px;
+    background-color: #006a6a; /* Apply background color directly */
 }
 
 .top-bar-start, .top-bar-end {
@@ -194,5 +196,5 @@ md-tabs {
 
 .chore-item.priority md-icon[slot="start"] {
     opacity: 1;
-    color: var(--md-sys-color-primary);
+    color: #ffb300; /* Use priority yellow for the star */
 }
