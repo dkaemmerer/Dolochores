@@ -26,7 +26,7 @@ main.scrollable-content {
 footer {
     flex-shrink: 0; /* Prevent footer from shrinking */
     z-index: 100;
-    background-color: var(--md-sys-color-surface-container);
+    background-color: var(--md-sys-color-surface-container-low);
 }
 
 a {
@@ -118,7 +118,7 @@ md-tabs {
 
 /* Top App Bar styles */
 .top-app-bar {
-    --md-top-app-bar-container-color: var(--md-sys-color-surface-container);
+    --md-top-app-bar-container-color: var(--md-sys-color-surface-container-low);
 }
 
 .top-bar-layout {
@@ -137,7 +137,7 @@ md-tabs {
 }
 
 .top-bar-end {
-    padding-right: 8px; /* Add padding to match start */
+    padding-right: 12px; /* Add more padding to match start */
 }
 
 .top-bar-center {
@@ -156,10 +156,24 @@ md-tabs {
 .search-form md-outlined-text-field {
     width: 100%;
     --md-outlined-text-field-container-shape: 28px;
-    --md-outlined-text-field-density: -2;
+    --md-outlined-text-field-density: -3.5;
 }
 
 /* Make add chore dialog taller */
 #add-chore-dialog {
     --md-dialog-container-height: 680px;
+}
+
+.page-header {
+    padding: 0 16px;
+}
+
+/* Style for priority vs non-priority star icons */
+.chore-item md-icon[slot="start"] {
+    opacity: 0.3; /* Faint by default */
+}
+
+.chore-item.priority md-icon[slot="start"] {
+    opacity: 1;
+    color: var(--md-sys-color-primary);
 }

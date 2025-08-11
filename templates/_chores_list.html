@@ -13,14 +13,18 @@
                 </div>
             </div>
             <md-list-item
-                class="chore-item"
+                class="chore-item {% if chore.is_priority %}priority{% endif %}"
             >
                 <div slot="headline">{{ chore.title }}</div>
                 <div slot="supporting-text">{{ chore.assignee.name }} &bull; Due: {{ chore.next_due.strftime('%b %d') if chore.next_due else 'N/A' }}</div>
 
+            <md-icon slot="start">
                 {% if chore.is_priority %}
-                <md-icon slot="start">star</md-icon>
+                    star
+                {% else %}
+                    star_border
                 {% endif %}
+            </md-icon>
 
                 <div slot="end" style="display: flex; align-items: center; gap: 8px;">
                     <span class="status-badge status-{{ chore.status | lower | replace(' ', '-') }}">
