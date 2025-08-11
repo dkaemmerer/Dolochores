@@ -127,7 +127,7 @@ md-tabs {
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    padding: 0 8px;
+    padding: 8px 0px;
 }
 
 .top-bar-start {
